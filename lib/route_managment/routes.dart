@@ -30,4 +30,10 @@ class Routes {
   static String alertScreen = '/ALERT_SCREEN';
   static String sparePartsTabsShellScreen = '/SPARE_PARTS_TABS_SHELL_SCREEN';
   static String workOrderManagementScreen = '/WORK_ORDER_MANAGEMENT_SCREEN';
+  static String workOrderDetailsTabScreen = '/WORK_ORDER_DETAILS_TAB_SCREEN';
+  static String startWorkOrderScreen = '/START_WORK_ORDER_SCREEN';
+  static String reassignWorkOrderScreen = '/REASSIGN_WORK_ORDER_SCREEN';
+  static String startWorkSubmitScreen = '/START_WORK_SUBMIT_SCREEN';
+  static String holdWorkOrderScreen = '/HOLD_WORK_ORDER_SCREEN';
+  static String cancelWorkOrderScreen = '/CANCEL_WORK_ORDER_SCREEN';
 }

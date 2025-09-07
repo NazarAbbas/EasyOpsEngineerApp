@@ -3,8 +3,6 @@
 import 'package:easy_ops/constants/values/app_colors.dart';
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/controller/work_order_list_controller.dart'
-    hide MarkerEvent;
 import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/models/work_order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +20,6 @@ class WorkOrdersManagementPage extends GetView<WorkOrdersManagementController> {
 
     final double headerH = isTablet ? 148 : 120;
     final double hPad = isTablet ? 16 : 12;
-    final double btnH = isTablet ? 56 : 52;
-    final double btnFs = isTablet ? 18 : 16;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
@@ -42,12 +38,11 @@ class WorkOrdersManagementPage extends GetView<WorkOrdersManagementController> {
                 return const _InitialLoading();
               }
 
-              // 2) Use controller.visibleOrders (already filtered by tab + query)
               final List<WorkOrder> data = controller.visibleOrders;
-
               if (data.isEmpty) {
                 return _EmptyState(
-                  onCreate: () => Get.toNamed(Routes.workOrderTabShellScreen),
+                  onCreate: () =>
+                      {}, // Get.toNamed(Routes.workOrderTabShellScreen),
                 );
               }
 
@@ -65,101 +60,6 @@ class WorkOrdersManagementPage extends GetView<WorkOrdersManagementController> {
               );
             }),
           ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(hPad, 10, hPad, 12),
-              child: SizedBox(
-                height: btnH,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    // Background: gradient + soft outline + shadow
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF2F6BFF), Color(0xFF3F84FF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.18),
-                            width: 1,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x332F6BFF),
-                              blurRadius: 16,
-                              offset: Offset(0, 8),
-                            ),
-                            BoxShadow(
-                              color: Color(0x1A000000),
-                              blurRadius: 3,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Subtle gloss highlight
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withOpacity(0.10),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Tap layer with ripple
-                    Positioned.fill(
-                      child: Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(14),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(14),
-                          onTap: () =>
-                              Get.toNamed(Routes.workOrderTabShellScreen),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                CupertinoIcons.add_circled_solid,
-                                color: Colors.white,
-                                size: btnFs + 4,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Create Work Order',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: btnFs,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: const BottomBar(currentIndex: 2),
@@ -169,12 +69,13 @@ class WorkOrdersManagementPage extends GetView<WorkOrdersManagementController> {
 
 /* ───────────────────────── Header ───────────────────────── */
 
-class _GradientHeader extends GetView<WorkOrdersController>
+class _GradientHeader extends GetView<WorkOrdersManagementController>
     implements PreferredSizeWidget {
   const _GradientHeader();
 
   @override
-  WorkOrdersController get controller => Get.find<WorkOrdersController>();
+  WorkOrdersManagementController get controller =>
+      Get.find<WorkOrdersManagementController>();
 
   @override
   Size get preferredSize => const Size.fromHeight(120);
@@ -245,10 +146,16 @@ class _GradientHeader extends GetView<WorkOrdersController>
                     useSafeArea: true,
                   );
                 },
-                // ignore: deprecated_member_use
                 bg: Colors.white.withOpacity(0.18),
                 outline: const Color(0x66FFFFFF),
                 child: const Icon(CupertinoIcons.calendar, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              _IconSquare(
+                onTap: () {},
+                bg: Colors.white.withOpacity(0.18),
+                outline: const Color(0x66FFFFFF),
+                child: const Icon(CupertinoIcons.plus, color: Colors.white),
               ),
             ],
           ),
@@ -759,11 +666,12 @@ class _Dot extends StatelessWidget {
 
 /* ───────────────────────── Top Tabs ───────────────────────── */
 
-class _Tabs extends GetView<WorkOrdersController> {
+class _Tabs extends GetView<WorkOrdersManagementController> {
   const _Tabs();
 
   @override
-  WorkOrdersController get controller => Get.find<WorkOrdersController>();
+  WorkOrdersManagementController get controller =>
+      Get.find<WorkOrdersManagementController>();
 
   bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
 
@@ -955,57 +863,6 @@ class _IconSquare extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  final VoidCallback onCreate;
-  const _EmptyState({required this.onCreate});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              CupertinoIcons.doc_on_clipboard,
-              size: 48,
-              color: Color(0xFFB7C1D6),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'No work orders found',
-              style: TextStyle(
-                color: Color(0xFF2D2F39),
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Try a different search or create a new work order.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF7C8698)),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: onCreate,
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFF2F6BFF)),
-                foregroundColor: const Color(0xFF2F6BFF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Create Work Order'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class BottomBar extends StatelessWidget {
   final int currentIndex;
   const BottomBar({super.key, required this.currentIndex});
@@ -1040,6 +897,10 @@ class BottomBar extends StatelessWidget {
             label: 'Home',
           ),
           NavigationDestination(
+            icon: Icon(CupertinoIcons.increase_indent),
+            label: 'Inventory',
+          ),
+          NavigationDestination(
             icon: Icon(CupertinoIcons.cube_box),
             label: 'Assets',
           ),
@@ -1055,13 +916,55 @@ class BottomBar extends StatelessWidget {
               Get.offAllNamed(Routes.homeDashboardScreen);
               break;
             case 1:
-              Get.offAllNamed(Routes.assetsManagementDashboardScreen);
+              Get.offAllNamed(Routes.homeDashboardScreen);
               break;
             case 2:
-              Get.offAllNamed(Routes.workOrderScreen);
+              Get.offAllNamed(Routes.assetsManagementDashboardScreen);
+              break;
+            case 3:
+              Get.toNamed(Routes.workOrderDetailsTabScreen);
               break;
           }
         },
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final VoidCallback onCreate;
+  const _EmptyState({required this.onCreate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              CupertinoIcons.doc_on_clipboard,
+              size: 48,
+              color: Color(0xFFB7C1D6),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'No work orders found',
+              style: TextStyle(
+                color: Color(0xFF2D2F39),
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Try a different search',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color(0xFF7C8698)),
+            ),
+          ],
+        ),
       ),
     );
   }

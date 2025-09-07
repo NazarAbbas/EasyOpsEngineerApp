@@ -12,7 +12,12 @@ import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/profile/c
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestions_details/controller/suggestions_details_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/controller/hold_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/controller/reassign_work_order_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/controller/start_work_submit_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/controller/work_order_details_tabs_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/consume_spare_parts/controller/consume_spare_parts_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/return_spare_parts/controller/return_spare_parts_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/tabs/controller/spare_parts_tabs_controller.dart';
@@ -48,6 +53,7 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => OperatorInfoController());
     Get.lazyPut(() => UpdateWorkOrderDetailsController());
     Get.lazyPut(() => UpdateWorkTabsController());
+    Get.lazyPut(() => WorkOrderDetailsTabsController());
     Get.lazyPut(() => ReopenWorkOrderController());
     Get.lazyPut(() => ClosureWorkOrderController());
     Get.lazyPut(() => WorkOrderTimelineController());
@@ -70,5 +76,9 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => ReturnSparePartsController());
     Get.lazyPut(() => ConsumedSparePartsController());
     Get.lazyPut(() => WorkOrdersManagementController());
+    Get.lazyPut(() => StartWorkOrderController());
+    Get.lazyPut(() => ReassignWorkOrderController());
+    Get.lazyPut(() => StartWorkSubmitController());
+    Get.lazyPut(() => HoldWorkOrderController());
   }
 }

@@ -14,8 +14,14 @@ import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/profile/u
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestions_details/ui/suggestions_details_page.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/support/ui/support_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/ui/hold_work_order_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/ui/start_work_order_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/controller/start_work_submit_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/ui/start_work_submit_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
 import 'package:easy_ops/ui/modules/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
 import 'package:easy_ops/ui/modules/work_order_management/create_work_order/mc_history/ui/mc_history_page.dart';
 import 'package:easy_ops/ui/modules/work_order_management/create_work_order/operator_info/ui/operator_info_page.dart';
@@ -218,6 +224,38 @@ class AllPages {
       GetPage(
         name: Routes.sparePartsTabsShellScreen,
         page: () => SparePartsTabsShell(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+
+      GetPage(
+        name: Routes.workOrderDetailsTabScreen,
+        page: () => WorkOrderDetailsTabsShell(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+
+      GetPage(
+        name: Routes.startWorkOrderScreen,
+        page: () => StartWorkOrderPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.reassignWorkOrderScreen,
+        page: () => ReassignWorkOrderPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.startWorkSubmitScreen,
+        page: () => StartWorkSubmitPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.holdWorkOrderScreen,
+        page: () => HoldWorkOrderPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
