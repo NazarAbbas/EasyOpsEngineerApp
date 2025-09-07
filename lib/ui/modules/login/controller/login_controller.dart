@@ -1,0 +1,139 @@
+import 'package:easy_ops/controllers/theme_controller.dart';
+import 'package:easy_ops/route_managment/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class LoginPageController extends GetxController {
+  // Inputs
+  final emailController = TextEditingController(); // email OR phone
+  final passwordController = TextEditingController();
+
+  // UI state
+  final isPasswordVisible = false.obs;
+  final isLoading = false.obs; // <-- for the progress indicator
+  final role = ''.obs;
+  final themeController = Get.find<ThemeController>();
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    emailController.text = "8860700947";
+    passwordController.text = "8860700947";
+  }
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
+  void forgotPassword() {
+    final idRaw = emailController.text.trim();
+
+    if (idRaw.isEmpty) {
+      _err('Please enter mobile number');
+      return;
+    }
+    final isPhone = _isValidPhone(idRaw);
+    if (!isPhone) {
+      _err('Please enter a valid phone number');
+      return;
+    }
+    final phone = _normalizePhone(idRaw); // keep your existing helper
+    Get.toNamed(Routes.forgotPasswordScreen, arguments: {'phone': phone});
+  }
+
+  Future<void> login() async {
+    // prevent double taps while in progress
+    if (isLoading.value) return;
+
+    final idRaw = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (idRaw.isEmpty || password.isEmpty) {
+      _err('Please fill in all fields');
+      return;
+    }
+
+    // Accept either email OR phone
+    final isEmail = _isValidEmail(idRaw);
+    final isPhone = _isValidPhone(idRaw);
+
+    if (!isEmail && !isPhone) {
+      _err('Enter a valid email address or phone number');
+      return;
+    }
+
+    // You can pass these to your API as separate fields if needed
+    final String? email = isEmail ? idRaw : null;
+    final String? phone = isPhone ? _normalizePhone(idRaw) : null;
+
+    // Dismiss keyboard
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    // ---- Simulate API call ----
+    isLoading.value = true;
+    try {
+      await Future.delayed(const Duration(seconds: 2)); // mock latency
+
+      // Mock “success” logic
+
+      //const userRoleFromApi = 'admin';
+      // role.value = userRoleFromApi;
+      themeController.setThemeByRole('admin'); //user/admin
+
+      // Navigate or show success
+      // Get.toNamed(Routes.workOrderScreen);
+      Get.toNamed(Routes.workOrderManagementScreen);
+      Get.snackbar(
+        'Success',
+        'Logged in successfully',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /* ================= Helpers ================= */
+
+  void _err(String msg) {
+    Get.snackbar(
+      'Error',
+      msg,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.redAccent,
+      colorText: Colors.white,
+    );
+  }
+
+  bool _isValidEmail(String input) {
+    // Simple, robust email check (no spaces, one "@", a dot after)
+    final re = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+    return re.hasMatch(input);
+  }
+
+  String _normalizePhone(String input) {
+    // Keep leading +, remove everything else that's not a digit
+    final cleaned = input.replaceAll(RegExp(r'[^\d+]'), '');
+    if (RegExp(r'\+').allMatches(cleaned).length > 1 ||
+        (cleaned.contains('+') && !cleaned.startsWith('+'))) {
+      return cleaned.replaceAll('+', '');
+    }
+    return cleaned;
+  }
+
+  bool _isValidPhone(String input) {
+    final normalized = _normalizePhone(input);
+    // Your spec: optional +, exactly 10 digits
+    return RegExp(r'^\+?\d{10}$').hasMatch(normalized);
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
+  }
+}

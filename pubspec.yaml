@@ -1,0 +1,113 @@
+name: easy_ops
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.6.5
+  dio: ^5.1.2
+  http: ^0.13.6
+  freezed_annotation: ^2.2.0
+  retrofit: '>=4.0.0 <5.0.0'
+  logger: ^1.3.0
+  floor: ^1.4.2
+  get_storage: ^2.1.1
+  loader_overlay: ^2.2.0
+  flutter_easyloading: ^3.0.5
+  pin_code_fields: ^8.0.1
+  cupertino_icons: ^1.0.8
+  table_calendar: ^3.0.9
+  record: ^6.1.1
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
+  audioplayers: ^5.2.1
+  signature: ^5.4.0   # or latest
+  open_filex: ^4.5.0
+  url_launcher: ^6.3.1
+  fl_chart: ^0.68.0
+  rename_app: ^1.6.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+# Uncomment and configure if you plan to use launcher icons
+# flutter_launcher_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   image_path: "assets/images/logo.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: inter
+      fonts:
+        # 18pt fonts
+        - asset: assets/fonts/Inter_18pt-Black.ttf
+        - asset: assets/fonts/Inter_18pt-BlackItalic.ttf
+        - asset: assets/fonts/Inter_18pt-Bold.ttf
+        - asset: assets/fonts/Inter_18pt-BoldItalic.ttf
+        - asset: assets/fonts/Inter_18pt-ExtraBold.ttf
+        - asset: assets/fonts/Inter_18pt-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Inter_18pt-ExtraLight.ttf
+        - asset: assets/fonts/Inter_18pt-ExtraLightItalic.ttf
+        - asset: assets/fonts/Inter_18pt-Italic.ttf
+        - asset: assets/fonts/Inter_18pt-Light.ttf
+        - asset: assets/fonts/Inter_18pt-LightItalic.ttf
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
+        - asset: assets/fonts/Inter_18pt-MediumItalic.ttf
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+        - asset: assets/fonts/Inter_18pt-SemiBoldItalic.ttf
+        - asset: assets/fonts/Inter_18pt-Thin.ttf
+        - asset: assets/fonts/Inter_18pt-ThinItalic.ttf
+
+        # 24pt fonts
+        - asset: assets/fonts/Inter_24pt-Black.ttf
+        - asset: assets/fonts/Inter_24pt-BlackItalic.ttf
+        - asset: assets/fonts/Inter_24pt-Bold.ttf
+        - asset: assets/fonts/Inter_24pt-BoldItalic.ttf
+        - asset: assets/fonts/Inter_24pt-ExtraBold.ttf
+        - asset: assets/fonts/Inter_24pt-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Inter_24pt-ExtraLight.ttf
+        - asset: assets/fonts/Inter_24pt-ExtraLightItalic.ttf
+        - asset: assets/fonts/Inter_24pt-Italic.ttf
+        - asset: assets/fonts/Inter_24pt-Light.ttf
+        - asset: assets/fonts/Inter_24pt-LightItalic.ttf
+        - asset: assets/fonts/Inter_24pt-Medium.ttf
+        - asset: assets/fonts/Inter_24pt-MediumItalic.ttf
+        - asset: assets/fonts/Inter_24pt-Regular.ttf
+        - asset: assets/fonts/Inter_24pt-SemiBold.ttf
+        - asset: assets/fonts/Inter_24pt-SemiBoldItalic.ttf
+        - asset: assets/fonts/Inter_24pt-Thin.ttf
+        - asset: assets/fonts/Inter_24pt-ThinItalic.ttf
+
+        # 28pt fonts
+        - asset: assets/fonts/Inter_28pt-Black.ttf
+        - asset: assets/fonts/Inter_28pt-BlackItalic.ttf
+        - asset: assets/fonts/Inter_28pt-Bold.ttf
+        - asset: assets/fonts/Inter_28pt-BoldItalic.ttf
+        - asset: assets/fonts/Inter_28pt-ExtraBold.ttf
+        - asset: assets/fonts/Inter_28pt-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Inter_28pt-ExtraLight.ttf
+        - asset: assets/fonts/Inter_28pt-ExtraLightItalic.ttf
+        - asset: assets/fonts/Inter_28pt-Italic.ttf
+        - asset: assets/fonts/Inter_28pt-Light.ttf
+        - asset: assets/fonts/Inter_28pt-LightItalic.ttf
+        - asset: assets/fonts/Inter_28pt-Medium.ttf
+        - asset: assets/fonts/Inter_28pt-MediumItalic.ttf
+        - asset: assets/fonts/Inter_28pt-Regular.ttf
+        - asset: assets/fonts/Inter_28pt-SemiBold.ttf
+        - asset: assets/fonts/Inter_28pt-SemiBoldItalic.ttf
+        - asset: assets/fonts/Inter_28pt-Thin.ttf
+        - asset: assets/fonts/Inter_28pt-ThinItalic.ttf
