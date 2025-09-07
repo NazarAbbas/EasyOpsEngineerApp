@@ -1,3 +1,3 @@
-# easy_ops
+# EasyOps Engineer App
 
 A new Flutter project.
