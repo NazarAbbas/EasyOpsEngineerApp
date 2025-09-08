@@ -1,9 +1,11 @@
-// work_order_page.dart
+// accept_work_order_page.dart
 import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/accept_work_order/controller/accept_work_order_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Thumb;
+import 'package:flutter/services.dart'; // for rootBundle (asset existence)
 import 'package:get/get.dart';
 
 /* ───────────────────────── Page ───────────────────────── */
@@ -20,15 +22,16 @@ class AcceptWorkOrderPage extends GetView<AcceptWorkOrderController> {
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-    final double headerH = isTablet ? 120 : 110;
     final double hPad = isTablet ? 18 : 14;
     final double btnH = isTablet ? 56 : 52;
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      // (Optional) Mount a header so back button is visible; comment out if you already have one.
       backgroundColor: const Color(0xFFF6F7FB),
+
+      // Bottom actions
       bottomNavigationBar: SafeArea(
         top: false,
         child: Padding(
@@ -75,82 +78,75 @@ class AcceptWorkOrderPage extends GetView<AcceptWorkOrderController> {
           ),
         ),
       ),
+
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE9EEF5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+        child: Column(
+          children: [
+            // Main details card (your original content minus media row)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE9EEF5)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
-            child: Obx(() {
-              final pillColor = _priorityColor(controller.priority.value);
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
+                child: Obx(() {
+                  final pillColor = _priorityColor(controller.priority.value);
 
-              // Build media lists with dummy fallbacks
-              final List<String> photos = controller.photoPaths
-                  .where((p) => p.isNotEmpty)
-                  .toList();
-              // final String audioPath = controller.voiceNotePath.value.isNotEmpty
-              //     ? controller.voiceNotePath.value
-              //     : kDummyVoice;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Reporter
-                  _KVBlock(
-                    rows: [
-                      _KV(
-                        label: 'Reported By :',
-                        value: controller.reportedBy.value.isEmpty
-                            ? '—'
-                            : controller.reportedBy.value,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Operator
-                  _OperatorSection(
-                    name: controller.operatorName.value,
-                    phone: controller.operatorPhoneNumber.value,
-                    info: controller.operatorInfo.value,
-                  ),
-
-                  const _DividerPad(),
-
-                  // Issue summary + priority pill
-                  Row(
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          controller.problemDescription.value.isEmpty
-                              ? '—'
-                              : controller.problemDescription.value,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: _C.text,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15.5,
-                            height: 1.25,
+                      // Reporter
+                      _KVBlock(
+                        rows: [
+                          _KV(
+                            label: 'Reported By :',
+                            value: controller.reportedBy.value.isEmpty
+                                ? '—'
+                                : controller.reportedBy.value,
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      const SizedBox(height: 8),
+
+                      // Operator section
+                      _OperatorSection(
+                        name: controller.operatorName.value,
+                        phone: controller.operatorPhoneNumber.value,
+                        info: controller.operatorInfo.value,
+                      ),
+
+                      const _DividerPad(),
+
+                      // Issue summary + priority pill
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Expanded(
+                            child: Text(
+                              controller.problemDescription.value.isEmpty
+                                  ? '—'
+                                  : controller.problemDescription.value,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: _C.text,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15.5,
+                                height: 1.25,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           _Pill(
                             text: controller.priority.value.isEmpty
                                 ? '—'
@@ -159,126 +155,182 @@ class AcceptWorkOrderPage extends GetView<AcceptWorkOrderController> {
                           ),
                         ],
                       ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                  // Time | Date | Issue Type
-                  Row(
-                    children: [
-                      Text(
-                        [
-                          controller.orderId.value.isEmpty
-                              ? '—'
-                              : controller.orderId.value,
-                          controller.time.value.isEmpty
-                              ? '—'
-                              : controller.time.value,
-                          controller.date.value.isEmpty
-                              ? '—'
-                              : controller.date.value,
-                        ].join(' | '),
-                        style: const TextStyle(
-                          color: _C.muted,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        controller.status.value.isEmpty
-                            ? '—'
-                            : controller.status.value,
-                        style: const TextStyle(
-                          color: _C.muted,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-
-                  // Asset / line name
-                  Text(
-                    controller.issueType.value,
-                    style: const TextStyle(
-                      color: _C.muted,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.exclamationmark_triangle_fill,
-                        size: 14,
-                        color: Color(0xFFE25555),
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          controller.cnc_1.value,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                      // Time | Date | Status
+                      Row(
+                        children: [
+                          Text(
+                            [
+                              controller.orderId.value.isEmpty
+                                  ? '—'
+                                  : controller.orderId.value,
+                              controller.time.value.isEmpty
+                                  ? '—'
+                                  : controller.time.value,
+                              controller.date.value.isEmpty
+                                  ? '—'
+                                  : controller.date.value,
+                            ].join(' | '),
+                            style: const TextStyle(
+                              color: _C.muted,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
+                          const Spacer(),
+                          Text(
+                            controller.status.value.isEmpty
+                                ? '—'
+                                : controller.status.value,
+                            style: const TextStyle(
+                              color: _C.muted,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+
+                      // Issue type + line
+                      Text(
+                        controller.issueType.value,
+                        style: const TextStyle(
+                          color: _C.muted,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                  ),
-                  const _DividerPad(),
-
-                  // Headline & Description
-                  Text(
-                    controller.descriptionText.value.isEmpty
-                        ? '—'
-                        : controller.descriptionText.value,
-                    style: const TextStyle(
-                      color: _C.text,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15.5,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    controller.problemDescription.value.isEmpty
-                        ? '—'
-                        : controller.problemDescription.value,
-                    style: const TextStyle(color: _C.text, height: 1.35),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Media row
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Thumbnails
-                      Expanded(
-                        child: photos.isEmpty
-                            ? const SizedBox()
-                            : Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                children: photos
-                                    .map((p) => _Thumb(path: p))
-                                    .toList(),
+                      Row(
+                        children: [
+                          const Icon(
+                            CupertinoIcons.exclamationmark_triangle_fill,
+                            size: 14,
+                            color: Color(0xFFE25555),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              controller.cnc_1.value,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
                               ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 10),
-                      // Audio on the right
-                      _AudioBubble(path: controller.voiceNotePath.value),
+                      const _DividerPad(),
+
+                      // Headline & Description
+                      Text(
+                        controller.descriptionText.value.isEmpty
+                            ? '—'
+                            : controller.descriptionText.value,
+                        style: const TextStyle(
+                          color: _C.text,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15.5,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        controller.problemDescription.value.isEmpty
+                            ? '—'
+                            : controller.problemDescription.value,
+                        style: const TextStyle(color: _C.text, height: 1.35),
+                      ),
                     ],
-                  ),
-                ],
-              );
-            }),
-          ),
+                  );
+                }),
+              ),
+            ),
+
+            // Media card (images + audio stacked)
+            const _MediaCard(),
+          ],
         ),
       ),
     );
   }
 }
+
+/* ───────────────────────── Media Card ───────────────────────── */
+
+class _MediaCard extends StatelessWidget {
+  const _MediaCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Get.find<AcceptWorkOrderController>();
+
+    return Obx(() {
+      final photos = c.photoPaths.where((p) => p.isNotEmpty).toList();
+      final voice = c.voiceNotePath.value;
+
+      if (photos.isEmpty && voice.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        margin: const EdgeInsets.only(top: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE9EEF5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
+          child: LayoutBuilder(
+            builder: (context, box) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Media',
+                    style: TextStyle(
+                      color: _C.text,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15.5,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  if (photos.isNotEmpty)
+                    SizedBox(
+                      width: box.maxWidth,
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: photos.map((p) => _Thumb(path: p)).toList(),
+                      ),
+                    ),
+
+                  if (voice.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _AudioBubble(
+                      path: voice,
+                      width: box.maxWidth, // stretch to card width
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    });
+  }
+}
+
 /* ───────────────────────── Operator Section ───────────────────────── */
 
 class _OperatorSection extends StatelessWidget {
@@ -300,19 +352,16 @@ class _OperatorSection extends StatelessWidget {
       children: [
         const Text('Operator', style: labelStyle),
         const SizedBox(height: 6),
-
         _LineWithIcon(
           icon: CupertinoIcons.person,
           text: name.isEmpty ? '—' : name,
         ),
         const SizedBox(height: 4),
-
         _LineWithIcon(
           icon: CupertinoIcons.phone,
           text: phone.isEmpty ? '—' : phone,
         ),
         const SizedBox(height: 4),
-
         _LineWithIcon(
           icon: CupertinoIcons.location,
           text: info.isEmpty ? '—' : info,
@@ -360,66 +409,6 @@ Color _priorityColor(String s) {
       return const Color(0xFF10B981);
     default:
       return const Color(0xFF9CA3AF);
-  }
-}
-
-/* ───────────────────────── Widgets ───────────────────────── */
-
-class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-  final bool isTablet;
-  const _GradientHeader({required this.title, required this.isTablet});
-
-  @override
-  Size get preferredSize => Size.fromHeight(isTablet ? 120 : 110);
-
-  @override
-  Widget build(BuildContext context) {
-    final btnSize = isTablet ? 48.0 : 44.0;
-    final iconSize = isTablet ? 26.0 : 22.0;
-
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF2F6BFF), Color(0xFF3F84FF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: EdgeInsets.fromLTRB(12, isTablet ? 12 : 10, 12, 12),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            SizedBox(
-              width: btnSize,
-              height: btnSize,
-              child: IconButton(
-                onPressed: () => Get.back(),
-                iconSize: iconSize,
-                splashRadius: btnSize / 2,
-                icon: const Icon(CupertinoIcons.back, color: Colors.white),
-                tooltip: 'Back',
-              ),
-            ),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: isTablet ? 20 : 18,
-                ),
-              ),
-            ),
-            SizedBox(width: btnSize, height: btnSize),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -493,30 +482,94 @@ class _Pill extends StatelessWidget {
   }
 }
 
+/* ───────────────────────── Media helpers ───────────────────────── */
+
+bool _isAsset(String p) => p.startsWith('assets/');
+bool _isUrl(String p) => p.startsWith('http://') || p.startsWith('https://');
+bool _isFilePath(String p) =>
+    p.startsWith('/') || p.contains(RegExp(r'^[A-Za-z]:[\\/].+'));
+String _assetKey(String assetPath) =>
+    assetPath.startsWith('assets/') ? assetPath.substring(7) : assetPath;
+
 class _Thumb extends StatelessWidget {
   final String path;
   const _Thumb({required this.path});
+
+  Future<bool> _assetExists(String assetPath) async {
+    try {
+      await rootBundle.load(assetPath);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (path.isEmpty) return const SizedBox.shrink();
 
-    ImageProvider? provider = NetworkImage(path);
-
-    return Container(
+    final base = Container(
       width: 88,
       height: 64,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(image: provider, fit: BoxFit.cover),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: const Icon(
+        CupertinoIcons.photo_on_rectangle,
+        size: 18,
+        color: _C.muted,
       ),
     );
+
+    if (_isAsset(path)) {
+      return FutureBuilder<bool>(
+        future: _assetExists(path),
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done || snap.data != true)
+            return base;
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(path, width: 88, height: 64, fit: BoxFit.cover),
+          );
+        },
+      );
+    }
+
+    if (_isUrl(path)) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          path,
+          width: 88,
+          height: 64,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => base,
+        ),
+      );
+    }
+
+    if (_isFilePath(path)) {
+      final f = File(path);
+      if (!f.existsSync()) return base;
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.file(f, width: 88, height: 64, fit: BoxFit.cover),
+      );
+    }
+
+    return base;
   }
 }
 
+/* ───────────────────────── Audio bubble (with slider) ───────────────────────── */
+
 class _AudioBubble extends StatefulWidget {
   final String path; // asset / file / url
-  final double width; // control width
-  const _AudioBubble({required this.path, this.width = 100, super.key});
+  final double? width; // full width if null
+  const _AudioBubble({required this.path, this.width, super.key});
 
   @override
   State<_AudioBubble> createState() => _AudioBubbleState();
@@ -532,7 +585,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
 
   Source? _buildSource(String p) {
     if (p.isEmpty) return null;
-    return UrlSource(p);
+    if (_isAsset(p)) return AssetSource(_assetKey(p));
+    if (_isUrl(p)) return UrlSource(p);
+    if (_isFilePath(p)) return DeviceFileSource(p);
+    return null;
   }
 
   @override
@@ -568,7 +624,9 @@ class _AudioBubbleState extends State<_AudioBubble> {
       final d = await _player.getDuration();
       if (mounted && d != null) setState(() => _duration = d);
       _currentSource = src;
-    } catch (_) {}
+    } catch (_) {
+      // silently ignore; user can still try play (we retry there)
+    }
   }
 
   @override
@@ -595,7 +653,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
         if (src == null) return;
         if (_position == Duration.zero) {
           await _player.stop();
-          await _player.play(src); // ensures duration event
+          await _player.play(src);
         } else {
           await _player.resume();
         }
@@ -635,7 +693,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
         : pos.inMilliseconds / _duration.inMilliseconds;
 
     return SizedBox(
-      width: widget.width, // compact width
+      width: widget.width ?? double.infinity,
       child: Container(
         padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
         decoration: BoxDecoration(
@@ -643,11 +701,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // shrink-wrap vertically
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Controls (row, no Expanded in a Column)
-            Column(
-              mainAxisSize: MainAxisSize.min,
+            // Controls row
+            Row(
               children: [
                 _isLoading
                     ? const SizedBox(
@@ -672,13 +729,11 @@ class _AudioBubbleState extends State<_AudioBubble> {
                       ),
                 const SizedBox(width: 6),
                 Flexible(
-                  // ← not Expanded
                   child: Text(
                     _duration == Duration.zero
                         ? total
                         : '${_fmt(pos)} / $total',
                     maxLines: 1,
-                    softWrap: false,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.right,
                     style: const TextStyle(
@@ -696,11 +751,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
                 trackHeight: 2,
                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
                 overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
-                minThumbSeparation: 0,
               ),
               child: Slider(
                 value: progress.clamp(0.0, 1.0),
-                onChanged: (v) => _seek(v),
+                onChanged: _seek,
                 activeColor: _C.primary,
                 inactiveColor: const Color(0xFFD7E2FF),
               ),

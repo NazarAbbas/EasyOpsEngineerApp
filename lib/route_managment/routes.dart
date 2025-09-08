@@ -36,4 +36,11 @@ class Routes {
   static String startWorkSubmitScreen = '/START_WORK_SUBMIT_SCREEN';
   static String holdWorkOrderScreen = '/HOLD_WORK_ORDER_SCREEN';
   static String cancelWorkOrderScreen = '/CANCEL_WORK_ORDER_SCREEN';
+  static String diagnosticsScreen = '/DIAGNOSTICS_SCREEN';
+  static String cancelWorkOrderFromDiagnosticsScreen =
+      '/CANCEL_WORK_ORDER_FROM_DIAGNOSTICS_SCREEN';
+  static String closureScreen = '/CLOSURE_SCREEN';
+  static String signOffScreen = '/SIGN_OFF_SCREEN';
+  static String returnSpareScreen = '/RETURN_SPARE_SCREEN';
+  static String rcaAnalysisScreen = '/RCA_ANALYSIS_SCREEN';
 }

@@ -25,7 +25,9 @@ class StartWorkSubmitPage extends GetView<StartWorkSubmitController> {
   @override
   Widget build(BuildContext context) {
     final c = controller;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Obx(
       () => Stack(
         children: [
@@ -34,7 +36,7 @@ class StartWorkSubmitPage extends GetView<StartWorkSubmitController> {
             appBar: AppBar(
               systemOverlayStyle: SystemUiOverlayStyle.light,
               toolbarHeight: 56,
-              backgroundColor: const Color(0xFF505764),
+              backgroundColor: primary,
               elevation: 0,
               centerTitle: true,
               leading: IconButton(
@@ -245,6 +247,9 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return SafeArea(
       top: false,
       child: Container(
@@ -260,17 +265,17 @@ class _BottomBar extends StatelessWidget {
                 () => OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
-                    side: const BorderSide(color: _C.primary),
+                    side: BorderSide(color: primary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: c.isSubmitting.value ? null : () => c.onDiscard(),
-                  child: const Text(
+                  child: Text(
                     'Discard',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: _C.primary,
+                      color: primary,
                     ),
                   ),
                 ),
@@ -284,9 +289,7 @@ class _BottomBar extends StatelessWidget {
                 return FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
-                    backgroundColor: canSubmit
-                        ? _C.primary
-                        : _C.primary.withOpacity(0.5),
+                    backgroundColor: canSubmit ? primary : primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

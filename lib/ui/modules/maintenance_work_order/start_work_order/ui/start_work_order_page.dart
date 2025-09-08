@@ -6,6 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+// 👇 for optional iOS-safe remote→local audio fallback
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
 
@@ -16,7 +19,6 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
 
   @override
   Widget build(BuildContext context) {
-    //final c = Get.put(StartWorkOrderController());
     final isTablet = _isTablet(context);
     final headerH = isTablet ? 110.0 : 96.0;
     final hPad = isTablet ? 18.0 : 14.0;
@@ -94,6 +96,7 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
             _SummaryHeroCard(),
             _OperatorInfoCard(),
             _WorkOrderInfoCard(),
+            _MediaCard(), // 👈 full-width card with images + audio stacked
             _SparesCard(),
           ],
         ),
@@ -114,7 +117,6 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
     final btnTopLeft = button.localToGlobal(Offset.zero, ancestor: overlay);
 
     // ---- Menu sizing so we can place it ABOVE the button ----
-    // We have 2 items of height 40 each + Material vertical padding ~8 top/bottom.
     const itemHeight = 40.0;
     const verticalPadding = 8.0;
     const gap = 6.0; // small space between button and menu
@@ -163,8 +165,6 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
 
     if (selected == 'hold') {
       Get.toNamed(Routes.holdWorkOrderScreen);
-
-      // );
     } else if (selected == 'cancel') {
       Get.toNamed(Routes.cancelWorkOrderScreen);
     }
@@ -246,6 +246,7 @@ class _SummaryHeroCard extends StatelessWidget {
         Theme.of(context).colorScheme.primary;
     return Obx(() {
       return Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           gradient: LinearGradient(
@@ -430,7 +431,7 @@ class _OperatorInfoCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _InfoRow(
-                label: 'Maintenance Manger',
+                label: 'Maintenance Manager',
                 value: c.maintenanceManager.value,
                 onCall: () {},
               ),
@@ -502,32 +503,68 @@ class _WorkOrderInfoCard extends StatelessWidget {
                 c.description.value,
                 style: const TextStyle(color: _C.text, height: 1.35),
               ),
-              const SizedBox(height: 14),
-
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Obx(() {
-                      final items = c.photoPaths
-                          .where((p) => p.isNotEmpty)
-                          .toList();
-                      if (items.isEmpty) return const SizedBox.shrink();
-                      return Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: items.map((p) => _Thumb(path: p)).toList(),
-                      );
-                    }),
-                  ),
-                  const SizedBox(width: 10),
-                  _AudioBubble(path: c.voiceNotePath.value),
-                ],
-              ),
             ],
           ],
         ),
       ),
+    );
+  }
+}
+
+/* ───────────────────────── Media Card (Images + Audio) ───────────────────────── */
+
+class _MediaCard extends StatelessWidget {
+  const _MediaCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Get.find<StartWorkOrderController>();
+
+    return _Card(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      child: Obx(() {
+        final photos = c.photoPaths.where((p) => p.isNotEmpty).toList();
+        final voice = c.voiceNotePath.value;
+
+        if (photos.isEmpty && voice.isEmpty) return const SizedBox.shrink();
+
+        return LayoutBuilder(
+          builder: (context, box) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Media',
+                  style: TextStyle(
+                    color: _C.text,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                if (photos.isNotEmpty)
+                  SizedBox(
+                    width: box.maxWidth, // full width wrap of thumbs
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: photos.map((p) => _Thumb(path: p)).toList(),
+                    ),
+                  ),
+
+                if (voice.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _AudioBubble(
+                    path: voice,
+                    width: box.maxWidth, // stretch audio bar across the card
+                  ),
+                ],
+              ],
+            );
+          },
+        );
+      }),
     );
   }
 }
@@ -649,6 +686,7 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 12),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -763,12 +801,12 @@ class _Thumb extends StatelessWidget {
   }
 }
 
-/* ───────────────────────── Audio bubble (with slider) ───────────────────────── */
+/* ───────────────────────── Audio bubble (with slider + iOS fallback) ───────────────────────── */
 
 class _AudioBubble extends StatefulWidget {
   final String path; // asset / file / url
-  final double width; // control width
-  const _AudioBubble({required this.path, this.width = 100, super.key});
+  final double? width; // full width if null
+  const _AudioBubble({required this.path, this.width, super.key});
 
   @override
   State<_AudioBubble> createState() => _AudioBubbleState();
@@ -781,6 +819,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   Source? _currentSource;
+  String? _localCachePath; // used if remote fails and we download
 
   Source? _buildSource(String p) {
     if (p.isEmpty) return null;
@@ -823,7 +862,35 @@ class _AudioBubbleState extends State<_AudioBubble> {
       final d = await _player.getDuration();
       if (mounted && d != null) setState(() => _duration = d);
       _currentSource = src;
-    } catch (_) {}
+    } catch (e) {
+      // iOS sometimes fails on remote streams; fall back to temp file
+      if (src is UrlSource) {
+        await _downloadAndUseLocal(src.url);
+      }
+    }
+  }
+
+  Future<void> _downloadAndUseLocal(String url) async {
+    try {
+      final resp = await http.get(Uri.parse(url));
+      if (resp.statusCode == 200) {
+        final dir = await getTemporaryDirectory();
+        final path =
+            '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.mp3';
+        final f = File(path);
+        await f.writeAsBytes(resp.bodyBytes);
+        _localCachePath = path;
+        final localSrc = DeviceFileSource(path);
+        await _player.setSource(localSrc);
+        final d = await _player.getDuration();
+        if (mounted && d != null) setState(() => _duration = d);
+        _currentSource = localSrc;
+      } else {
+        debugPrint('Audio download failed: ${resp.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Audio download exception: $e');
+    }
   }
 
   @override
@@ -846,25 +913,39 @@ class _AudioBubbleState extends State<_AudioBubble> {
         await _player.pause();
         setState(() => _isPlaying = false);
       } else {
-        final src = _currentSource ?? _buildSource(widget.path);
-        if (src == null) return;
-        if (_position == Duration.zero) {
-          await _player.stop();
-          await _player.play(src); // ensures duration event
-        } else {
-          await _player.resume();
+        var src = _currentSource ?? _buildSource(widget.path);
+
+        // prefer local cache if available
+        if (_localCachePath != null) {
+          src = DeviceFileSource(_localCachePath!);
+          _currentSource = src;
         }
-        setState(() => _isPlaying = true);
-      }
-    } catch (_) {
-      try {
-        final src = _buildSource(widget.path);
-        if (src != null) {
-          await _player.stop();
-          await _player.play(src);
+
+        try {
+          if (_position == Duration.zero) {
+            await _player.stop();
+            if (_currentSource == null && src != null) {
+              await _player.setSource(src);
+              _currentSource = src;
+            }
+            await _player.resume(); // start from 0
+          } else {
+            await _player.resume();
+          }
           setState(() => _isPlaying = true);
+        } catch (playErr) {
+          // last-chance: if remote stream fails here, download + use local
+          if (src is UrlSource) {
+            await _downloadAndUseLocal(src.url);
+            await _player.resume();
+            setState(() => _isPlaying = true);
+          } else {
+            rethrow;
+          }
         }
-      } catch (_) {}
+      }
+    } catch (e) {
+      debugPrint('Audio toggle error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -890,7 +971,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
         : pos.inMilliseconds / _duration.inMilliseconds;
 
     return SizedBox(
-      width: widget.width, // compact width
+      width: widget.width ?? double.infinity,
       child: Container(
         padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
         decoration: BoxDecoration(
@@ -898,11 +979,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // shrink-wrap vertically
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Controls (row, no Expanded in a Column)
-            Column(
-              mainAxisSize: MainAxisSize.min,
+            // Controls row
+            Row(
               children: [
                 _isLoading
                     ? const SizedBox(
@@ -927,13 +1007,11 @@ class _AudioBubbleState extends State<_AudioBubble> {
                       ),
                 const SizedBox(width: 6),
                 Flexible(
-                  // ← not Expanded
                   child: Text(
                     _duration == Duration.zero
                         ? total
                         : '${_fmt(pos)} / $total',
                     maxLines: 1,
-                    softWrap: false,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.right,
                     style: const TextStyle(
@@ -951,11 +1029,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
                 trackHeight: 2,
                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
                 overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
-                minThumbSeparation: 0,
               ),
               child: Slider(
                 value: progress.clamp(0.0, 1.0),
-                onChanged: (v) => _seek(v),
+                onChanged: _seek,
                 activeColor: _C.primary,
                 inactiveColor: const Color(0xFFD7E2FF),
               ),

@@ -1,4 +1,5 @@
 // start_work_page.dart
+import 'package:easy_ops/route_managment/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -73,7 +74,8 @@ class StartWorkSubmitController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(12),
       );
-      Get.back(); // close page
+      Get.toNamed(Routes.diagnosticsScreen);
+      //Get.back(); // close page
     } catch (_) {
       Get.snackbar(
         'Failed',

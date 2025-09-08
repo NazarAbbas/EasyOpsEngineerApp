@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/constants/constant.dart';
 import 'package:easy_ops/constants/dependency_injection/dependency_injection.dart';
 import 'package:easy_ops/constants/values/app_language.dart';
@@ -15,6 +16,14 @@ import 'network/my_http_overrides.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AudioPlayer.global.setAudioContext(
+    const AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: [AVAudioSessionOptions.mixWithOthers],
+      ),
+    ),
+  );
   await DependencyInjection.init();
   await GetStorage.init();
   HttpOverrides.global = MyHttpOverrides();

@@ -12,9 +12,15 @@ import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/profile/c
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestions_details/controller/suggestions_details_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/cancel_work_order/controller/cancel_work_order_controller_from_diagnostics.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/closure/controller/closure_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/controller/diagnostics_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/controller/hold_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/controller/reassign_work_order_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/controller/start_work_submit_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/controller/work_order_details_tabs_controller.dart';
@@ -80,5 +86,11 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => ReassignWorkOrderController());
     Get.lazyPut(() => StartWorkSubmitController());
     Get.lazyPut(() => HoldWorkOrderController());
+    Get.lazyPut(() => DiagnosticsController());
+    Get.lazyPut(() => CancelWorkOrderControllerFromDiagnostics());
+    Get.lazyPut(() => ClosureController());
+    Get.lazyPut(() => SignOffController());
+    Get.lazyPut(() => ReturnSparesController());
+    Get.lazyPut(() => RcaAnalysisController());
   }
 }
