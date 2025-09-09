@@ -7,14 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
+/* ───────── SignaturePad external controller ───────── */
+class SignaturePadController {
+  _SignaturePadState? _state;
+
+  Future<Uint8List?> exportPng() => _state?.exportPng() ?? Future.value(null);
+  void clear() => _state?.clearAll();
+
+  // internal
+  void _bind(_SignaturePadState s) => _state = s;
+  void _unbind(_SignaturePadState s) {
+    if (identical(_state, s)) _state = null;
+  }
+}
+
 class SignOffPage extends GetView<SignOffController> {
   SignOffPage({super.key});
 
   @override
   SignOffController get controller => Get.put(SignOffController());
 
-  // Access SignaturePad state to export PNG on Save
-  final GlobalKey<_SignaturePadState> _sigKey = GlobalKey<_SignaturePadState>();
+  // Controller to access the pad (no GlobalKey)
+  final SignaturePadController _sigController = SignaturePadController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +59,26 @@ class SignOffPage extends GetView<SignOffController> {
                         const _Label('Sign'),
                         const Spacer(),
                         TextButton(
-                          onPressed: controller.clearSignature,
+                          onPressed: () {
+                            controller
+                                .clearSignature(); // clear controller state
+                            _sigController
+                                .clear(); // clear pad (strokes + image)
+                          },
                           child: const Text('Clear'),
                         ),
                       ],
                     ),
                     const SizedBox(height: 6),
-                    _SignaturePad(
-                      key: _sigKey,
-                      onChanged: (hasStroke) =>
-                          controller.hasSignature.value = hasStroke,
+                    Obx(
+                      () => _SignaturePad(
+                        controller: _sigController,
+                        initialBytes: controller
+                            .signatureBytes
+                            .value, // show existing signature
+                        onChanged: (hasStrokeOrImage) =>
+                            controller.hasSignature.value = hasStrokeOrImage,
+                      ),
                     ),
 
                     const SizedBox(height: 16),
@@ -150,8 +174,7 @@ class SignOffPage extends GetView<SignOffController> {
                     onPressed: enabled
                         ? () async {
                             // export PNG from signature pad
-                            final bytes = await _sigKey.currentState
-                                ?.exportPng();
+                            final bytes = await _sigController.exportPng();
                             if (bytes == null || bytes.isEmpty) {
                               Get.snackbar(
                                 'Signature',
@@ -162,7 +185,7 @@ class SignOffPage extends GetView<SignOffController> {
                             }
                             controller.signatureBytes.value = bytes;
                             await controller
-                                .save(); // will Get.back(result: SignatureResult)
+                                .save(); // Get.back(result: SignatureResult)
                           }
                         : null,
                     style: FilledButton.styleFrom(
@@ -197,11 +220,19 @@ class SignOffPage extends GetView<SignOffController> {
   }
 }
 
-/* ───────── Signature Pad ───────── */
+/* ───────── Signature Pad (controller-based, no GlobalKey) ───────── */
 
 class _SignaturePad extends StatefulWidget {
+  final SignaturePadController controller;
+  final Uint8List? initialBytes; // optional: show existing signature
   final ValueChanged<bool> onChanged;
-  const _SignaturePad({required this.onChanged, super.key});
+
+  const _SignaturePad({
+    required this.controller,
+    required this.onChanged,
+    this.initialBytes,
+    super.key,
+  });
 
   @override
   State<_SignaturePad> createState() => _SignaturePadState();
@@ -212,6 +243,35 @@ class _SignaturePadState extends State<_SignaturePad> {
   final ValueNotifier<int> _repaint = ValueNotifier(0);
   final GlobalKey _boundaryKey = GlobalKey(); // for PNG capture
   final GlobalKey _boxKey = GlobalKey(); // for clamping
+
+  Uint8List? _initialBytes; // local copy so we can clear independently
+
+  @override
+  void initState() {
+    super.initState();
+    _initialBytes = widget.initialBytes;
+    widget.controller._bind(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onChanged(_hasSignature || _initialBytes != null);
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _SignaturePad oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.initialBytes, widget.initialBytes)) {
+      setState(() => _initialBytes = widget.initialBytes);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onChanged(_hasSignature || _initialBytes != null);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller._unbind(this);
+    super.dispose();
+  }
 
   bool get _hasSignature => _strokes.any((s) => s.length > 1);
 
@@ -238,7 +298,7 @@ class _SignaturePadState extends State<_SignaturePad> {
     if (_strokes.isEmpty) _strokes.add(<Offset>[]);
     _strokes.last.add(_toLocalAndClamp(e.position));
     _repaint.value++;
-    widget.onChanged(_hasSignature);
+    widget.onChanged(_hasSignature || _initialBytes != null);
   }
 
   void _finish() {
@@ -246,11 +306,19 @@ class _SignaturePadState extends State<_SignaturePad> {
       _strokes.removeLast();
       _repaint.value++;
     }
-    widget.onChanged(_hasSignature);
+    widget.onChanged(_hasSignature || _initialBytes != null);
   }
 
   void _up(PointerUpEvent e) => _finish();
   void _cancel(PointerCancelEvent e) => _finish();
+
+  /// Clear both strokes and any loaded initial image
+  void clearAll() {
+    _strokes.clear();
+    _repaint.value++;
+    setState(() => _initialBytes = null);
+    widget.onChanged(false);
+  }
 
   Future<Uint8List?> exportPng() async {
     final boundary =
@@ -286,8 +354,26 @@ class _SignaturePadState extends State<_SignaturePad> {
               key: _boxKey,
               height: 160,
               width: double.infinity,
-              child: CustomPaint(
-                painter: _SignaturePainter(_strokes, repaint: _repaint),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Show initial image (if any) UNDER the strokes,
+                  // and only when user hasn't drawn new strokes.
+                  if (_initialBytes != null && !_hasSignature)
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                      child: Image.memory(
+                        _initialBytes!,
+                        gaplessPlayback: true,
+                      ),
+                    ),
+
+                  // Drawing layer
+                  CustomPaint(
+                    painter: _SignaturePainter(_strokes, repaint: _repaint),
+                  ),
+                ],
               ),
             ),
           ),

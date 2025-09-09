@@ -18,6 +18,7 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/con
 import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/controller/diagnostics_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/controller/hold_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/controller/pending_activity_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/controller/reassign_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
@@ -92,5 +93,6 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => SignOffController());
     Get.lazyPut(() => ReturnSparesController());
     Get.lazyPut(() => RcaAnalysisController());
+    Get.lazyPut(() => PendingActivityController());
   }
 }

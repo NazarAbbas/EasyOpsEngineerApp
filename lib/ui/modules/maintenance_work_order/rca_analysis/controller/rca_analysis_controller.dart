@@ -34,21 +34,46 @@ class RcaAnalysisController extends GetxController {
     whyCtrls = List.generate(5, (_) => TextEditingController());
     rootCauseCtrl = TextEditingController();
     correctiveCtrl = TextEditingController();
-
-    // (Optional demo defaults)
-    problemCtrl.text = 'Vehicle will not start';
-    whyCtrls[0].text = 'The Battery is dead';
-    whyCtrls[1].text = 'The alternator is not functioning';
-    whyCtrls[2].text = 'The alternator belt has broken';
-    whyCtrls[3].text =
-        'The alternator belt was well beyond its useful service life and replaced.';
-    whyCtrls[4].text =
-        'The vehicle was not maintained according to the recommended service schedule.';
-    rootCauseCtrl.text = 'Service Scheduled not followed';
-    correctiveCtrl.text =
-        'Ensure 100% schedule adherence of preventive maintenance';
     super.onInit();
+    final arg = Get.arguments;
+    if (arg is RcaResult) {
+      // Prefill with incoming data
+      problemCtrl.text = arg.problemIdentified;
+      rootCauseCtrl.text = arg.rootCause;
+      correctiveCtrl.text = arg.correctiveAction;
+      whyCtrls[0].text = arg.fiveWhys[0];
+      whyCtrls[1].text = arg.fiveWhys[1];
+      whyCtrls[2].text = arg.fiveWhys[2];
+      whyCtrls[3].text = arg.fiveWhys[3];
+      whyCtrls[4].text = arg.fiveWhys[4];
+    }
   }
+
+  // void saveAndBack() {
+  //   final model = RcaFormData(
+  //     problemIdentified: problemCtrl.text.trim(),
+  //     rootCause: rootCauseCtrl.text.trim(),
+  //     correctiveAction: correctiveCtrl.text.trim(),
+  //   );
+  //   Get.back(result: model); // <-- return TYPED model
+  // }
+
+  // @override
+  // void onInit() {
+  //   // (Optional demo defaults)
+  //   // problemCtrl.text = 'Vehicle will not start';
+  //   // whyCtrls[0].text = 'The Battery is dead';
+  //   // whyCtrls[1].text = 'The alternator is not functioning';
+  //   // whyCtrls[2].text = 'The alternator belt has broken';
+  //   // whyCtrls[3].text =
+  //   //     'The alternator belt was well beyond its useful service life and replaced.';
+  //   // whyCtrls[4].text =
+  //   //     'The vehicle was not maintained according to the recommended service schedule.';
+  //   // rootCauseCtrl.text = 'Service Scheduled not followed';
+  //   // correctiveCtrl.text =
+  //   //     'Ensure 100% schedule adherence of preventive maintenance';
+  //   super.onInit();
+  // }
 
   @override
   void onClose() {

@@ -33,9 +33,9 @@ class DiagnosticsController extends GetxController {
   }
 
   Future<void> endWork() async {
-    isLoading.value = true;
+    //isLoading.value = true;
     await Future.delayed(const Duration(seconds: 1));
-    isLoading.value = false;
+    //isLoading.value = false;
     Get.toNamed(Routes.closureScreen);
     //Get.snackbar('Success', 'Work ended');
   }

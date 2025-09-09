@@ -2,6 +2,9 @@ import 'dart:typed_data';
 
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/closure/controller/closure_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/controller/pending_activity_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,22 +63,6 @@ class ClosurePage extends GetView<ClosureController> {
       bottomNavigationBar: _BottomBar(onResolve: controller.resolveWorkOrder),
     );
   }
-}
-
-/* ─────────────────────── RESULT MODEL (NAV) ─────────────────────── */
-
-class SignatureResult {
-  final Uint8List bytes;
-  final String name;
-  final String designation;
-  final DateTime time;
-
-  const SignatureResult({
-    required this.bytes,
-    required this.name,
-    required this.designation,
-    required this.time,
-  });
 }
 
 /* ─────────────────────── BOTTOM BAR ─────────────────────── */
@@ -365,9 +352,20 @@ class _ClosureCommentsCard extends GetView<ClosureController> {
                   iconSize: 26,
                   tooltip: 'Edit signature',
                   onTap: () async {
-                    final res = await Get.toNamed(Routes.signOffScreen);
-                    controller.signatureResult.value = res;
+                    final res = await Get.toNamed(
+                      Routes.signOffScreen,
+                      arguments:
+                          controller.signatureResult.value ??
+                          SignatureResult.empty(),
+                    );
+                    if (res is SignatureResult) {
+                      controller.signatureResult.value = res;
+                    }
                   },
+                  // onTap: () async {
+                  // final res = await Get.toNamed(Routes.signOffScreen);
+                  //controller.signatureResult.value = res;
+                  // },
                 ),
               ],
             );
@@ -445,7 +443,6 @@ class _SparesConsumedCard extends GetView<ClosureController> {
                         icon: CupertinoIcons.wrench_fill,
                         bg: const Color(0xFFEFF4FF),
                         fg: _C.primary,
-                        tooltip: 'Return spares',
                         onTap: () {
                           Get.toNamed(Routes.returnSpareScreen);
                         },
@@ -539,6 +536,17 @@ class _RcaCard extends GetView<ClosureController> {
 
                   children: [
                     _RcaLine('Problem Identified', r?.problemIdentified),
+
+                    const SizedBox(height: 10),
+                    _RcaLine('Why 1', r?.fiveWhys[0]),
+                    const SizedBox(height: 10),
+                    _RcaLine('Why 2', r?.fiveWhys[1]),
+                    const SizedBox(height: 10),
+                    _RcaLine('Why 3', r?.fiveWhys[2]),
+                    const SizedBox(height: 10),
+                    _RcaLine('Why 4', r?.fiveWhys[3]),
+                    const SizedBox(height: 10),
+                    _RcaLine('Why 5', r?.fiveWhys[4]),
                     const SizedBox(height: 10),
                     _RcaLine('Root Cause Identified', r?.rootCause),
                     const SizedBox(height: 10),
@@ -594,30 +602,149 @@ class _RcaLine extends StatelessWidget {
 class _PendingActivityCard extends GetView<ClosureController> {
   const _PendingActivityCard();
 
+  String _fmtDate(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final open = controller.pendingOpen.value;
+      final items = controller.pendingActivities;
+      final count = items.length;
+
       return _SoftCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _AccordionHeader(
               title: 'Pending Activity',
-              subtitle: '0 Identified',
+              subtitle: '$count Identified',
               open: open,
               onToggle: controller.pendingOpen.toggle,
             ),
+
             AnimatedCrossFade(
               crossFadeState: open
                   ? CrossFadeState.showFirst
                   : CrossFadeState.showSecond,
               duration: const Duration(milliseconds: 180),
-              firstChild: const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: _EnterRowAddActivity(
-                  text: 'Add activity',
-                  icon: CupertinoIcons.list_bullet_below_rectangle,
+              firstChild: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(
+                  children: [
+                    // “Add activity” row
+                    const _PendingActivity(
+                      text: 'Add activity',
+                      icon: CupertinoIcons.list_bullet_below_rectangle,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // List of returned activities
+                    if (count == 0)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'No activities yet. Tap "Add activity" to create one.',
+                          style: TextStyle(color: _C.muted, fontSize: 12),
+                        ),
+                      )
+                    else
+                      Column(
+                        children: items.map((it) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFFE9EEF5),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title + status (right)
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        it.title,
+                                        style: const TextStyle(
+                                          fontSize: 14.5,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      it.status,
+                                      style: const TextStyle(
+                                        color: _C.primary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+
+                                // ID + date + assignee
+                                Row(
+                                  children: [
+                                    Text(
+                                      it.id,
+                                      style: const TextStyle(
+                                        color: _C.muted,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    if (it.targetDate != null) ...[
+                                      const Icon(
+                                        CupertinoIcons.calendar,
+                                        size: 14,
+                                        color: _C.muted,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        _fmtDate(it.targetDate!),
+                                        style: const TextStyle(
+                                          color: _C.muted,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                    ],
+                                    const Icon(
+                                      CupertinoIcons.person,
+                                      size: 14,
+                                      color: _C.muted,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      it.assignee ?? 'Unassigned',
+                                      style: const TextStyle(
+                                        color: _C.muted,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                if ((it.note ?? '').isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    it.note!,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                  ],
                 ),
               ),
               secondChild: const SizedBox.shrink(),
@@ -667,23 +794,28 @@ class _EnterRowRCA extends GetView<ClosureController> {
         ),
       ),
       _IconChip(
-        icon: CupertinoIcons.wrench_fill,
+        icon: icon, //CupertinoIcons.wrench_fill,
         bg: const Color(0xFFEFF4FF),
         fg: _C.primary,
-        tooltip: 'Return spares',
         onTap: () async {
-          final res = await Get.toNamed(Routes.rcaAnalysisScreen);
-          controller.rcaResult.value = res;
+          final res = await Get.toNamed(
+            Routes.rcaAnalysisScreen,
+            arguments: controller.rcaResult.value,
+          );
+
+          if (res is RcaResult) {
+            controller.rcaResult.value = res;
+          }
         },
       ),
     ],
   );
 }
 
-class _EnterRowAddActivity extends GetView<ClosureController> {
+class _PendingActivity extends GetView<ClosureController> {
   final String text;
   final IconData icon;
-  const _EnterRowAddActivity({required this.text, required this.icon});
+  const _PendingActivity({required this.text, required this.icon});
   @override
   Widget build(BuildContext context) => Row(
     children: [
@@ -697,18 +829,58 @@ class _EnterRowAddActivity extends GetView<ClosureController> {
         ),
       ),
       _IconChip(
-        icon: CupertinoIcons.wrench_fill,
+        icon: icon,
+
+        ///CupertinoIcons.wrench_fill,
         bg: const Color(0xFFEFF4FF),
         fg: _C.primary,
-        tooltip: 'Return spares',
         onTap: () async {
-          final res = await Get.toNamed(Routes.rcaAnalysisScreen);
-          controller.rcaResult.value = res;
+          final res = await Get.toNamed(
+            Routes.pendingActivityScreen,
+            arguments: PendingActivityArgs(
+              initial: List<ActivityItem>.from(controller.pendingActivities),
+            ),
+          );
+
+          if (res is PendingActivityResult &&
+              res.action == PendingActivityAction.back) {
+            // use items directly (models, not maps)
+            controller.pendingActivities.assignAll(res.activities);
+          }
         },
       ),
     ],
   );
 }
+
+// class _EnterRowAddActivity extends GetView<ClosureController> {
+//   final String text;
+//   final IconData icon;
+//   const _EnterRowAddActivity({required this.text, required this.icon});
+//   @override
+//   Widget build(BuildContext context) => Row(
+//     children: [
+//       Expanded(
+//         child: Text(
+//           text,
+//           style: const TextStyle(
+//             color: _C.primary,
+//             fontWeight: FontWeight.w800,
+//           ),
+//         ),
+//       ),
+//       _IconChip(
+//         icon: CupertinoIcons.wrench_fill,
+//         bg: const Color(0xFFEFF4FF),
+//         fg: _C.primary,
+//         onTap: () async {
+//           final res = await Get.toNamed(Routes.rcaAnalysisScreen);
+//           controller.rcaResult.value = res;
+//         },
+//       ),
+//     ],
+//   );
+// }
 
 class _KVRow extends StatelessWidget {
   final String leftTitle;

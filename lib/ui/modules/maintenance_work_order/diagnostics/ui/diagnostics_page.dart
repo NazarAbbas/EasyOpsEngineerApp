@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/controller/diagnostics_controller.dart';
+import 'package:easy_ops/utils/loading_overlay.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,7 +55,13 @@ class DiagnosticsPage extends GetView<DiagnosticsController> {
         );
       }),
       bottomNavigationBar: _BottomActions(
-        onEnd: controller.endWork,
+        onEnd: () => {
+          controller.isLoading.value = true,
+          const LoadingOverlay(message: 'Please wait...'),
+          controller.endWork(),
+          controller.isLoading.value = false,
+        },
+
         onHold: controller.hold,
         onReassign: controller.reassign,
         onCancel: controller.cancel,

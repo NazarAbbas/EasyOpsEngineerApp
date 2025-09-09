@@ -1,14 +1,27 @@
-import 'package:easy_ops/ui/modules/maintenance_work_order/closure/ui/closure_page.dart';
+// closure_controller.dart
+import 'dart:convert';
+import 'package:easy_ops/route_managment/routes.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/controller/pending_activity_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
+class PendingActivityArgs {
+  final List<ActivityItem> initial;
+  const PendingActivityArgs({required this.initial});
+}
 
 class ClosureController extends GetxController {
   // UI state
   final isLoading = false.obs;
-  // in ClosureController
+
+  // collected results
   final Rxn<SignatureResult> signatureResult = Rxn<SignatureResult>();
   final Rxn<RcaResult> rcaResult = Rxn<RcaResult>();
+  final RxList<ActivityItem> pendingActivities = <ActivityItem>[].obs;
+
   // Dropdown
   final resolutionTypes = <String>[
     'Belt Problem',
@@ -34,10 +47,72 @@ class ClosureController extends GetxController {
   final sparesToReturnNos = 0.obs;
   final sparesToReturnCost = 0.obs;
 
+  /// Collects all data and sends to API
   Future<void> resolveWorkOrder() async {
+    // Build request body
+    final payload = {
+      "resolutionType": selectedResolution.value,
+      "note": noteController.text.trim(),
+      "signature": signatureResult.value == null
+          ? null
+          : {
+              "empCode": signatureResult.value!.empCode,
+              "name": signatureResult.value!.name,
+              "designation": signatureResult.value!.designation,
+              "time": signatureResult.value!.time.toIso8601String(),
+              "bytes": signatureResult.value!.bytes != null
+                  ? base64Encode(signatureResult.value!.bytes!)
+                  : null,
+            },
+      "rca": rcaResult.value == null
+          ? null
+          : {
+              "problemIdentified": rcaResult.value!.problemIdentified,
+              "fiveWhys": rcaResult.value!.fiveWhys,
+              "rootCause": rcaResult.value!.rootCause,
+              "correctiveAction": rcaResult.value!.correctiveAction,
+            },
+      "pendingActivities": pendingActivities
+          .map(
+            (a) => {
+              "id": a.id,
+              "title": a.title,
+              "type": a.type.name,
+              "assignee": a.assignee,
+              "targetDate": a.targetDate?.toIso8601String(),
+              "note": a.note,
+              "status": a.status,
+            },
+          )
+          .toList(),
+      "spares": {
+        "consumed": {
+          "nos": sparesConsumedNos.value,
+          "cost": sparesConsumedCost.value,
+        },
+        "issued": {
+          "nos": sparesIssuedNos.value,
+          "cost": sparesIssuedCost.value,
+        },
+        "toReturn": {
+          "nos": sparesToReturnNos.value,
+          "cost": sparesToReturnCost.value,
+        },
+      },
+    };
+
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2)); // ← fake API
+    // Example: replace with your backend endpoint
+    // final resp = await http.post(
+    //   Uri.parse("https://api.example.com/workorders/resolve"),
+    //   headers: {"Content-Type": "application/json"},
+    //   body: jsonEncode(payload),
+    // );
+    await Future.delayed(const Duration(milliseconds: 900));
+
     isLoading.value = false;
+
+    Get.offAllNamed(Routes.workOrderManagementScreen);
 
     Get.snackbar(
       'Resolved',

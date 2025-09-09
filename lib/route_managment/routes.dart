@@ -43,4 +43,5 @@ class Routes {
   static String signOffScreen = '/SIGN_OFF_SCREEN';
   static String returnSpareScreen = '/RETURN_SPARE_SCREEN';
   static String rcaAnalysisScreen = '/RCA_ANALYSIS_SCREEN';
+  static String pendingActivityScreen = '/PENDING_ACTIVITY_SCREEN';
 }

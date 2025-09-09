@@ -20,6 +20,7 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/ui/
 import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/ui/diagnostics_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/ui/hold_work_order_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/ui/panding_activity_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/ui/rca_analysis_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
@@ -297,6 +298,12 @@ class AllPages {
       GetPage(
         name: Routes.rcaAnalysisScreen,
         page: () => RcaAnalysisPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.pendingActivityScreen,
+        page: () => PendingActivityPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
