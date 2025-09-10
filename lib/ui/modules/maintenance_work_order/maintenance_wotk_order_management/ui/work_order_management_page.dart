@@ -872,17 +872,20 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        indicatorColor: _blue.withOpacity(0.10),
+        indicatorColor: primary.withOpacity(0.10),
         iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
           final selected = states.contains(WidgetState.selected);
-          return IconThemeData(color: selected ? _blue : _grey);
+          return IconThemeData(color: selected ? primary : primary);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
-            color: selected ? _blue : _grey,
+            color: selected ? primary : primary,
             fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
           );
         }),

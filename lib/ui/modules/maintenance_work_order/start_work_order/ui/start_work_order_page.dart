@@ -166,7 +166,7 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
     if (selected == 'hold') {
       Get.toNamed(Routes.holdWorkOrderScreen);
     } else if (selected == 'cancel') {
-      Get.toNamed(Routes.cancelWorkOrderScreen);
+      Get.toNamed(Routes.cancelWorkOrderFromDiagnosticsScreen);
     }
   }
 }

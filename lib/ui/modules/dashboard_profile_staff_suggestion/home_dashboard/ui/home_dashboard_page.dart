@@ -11,7 +11,9 @@ class HomeDashboardPage extends GetView<HomeDashboardController> {
   @override
   Widget build(BuildContext context) {
     final c = controller;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       body: Column(
@@ -133,13 +135,16 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     final top = MediaQuery.paddingOf(context).top;
     return Container(
       height: height,
       padding: EdgeInsets.only(top: top + 14, left: 16, right: 16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF2F6BFF), Color(0xFF5C8CFF)],
+          colors: [primary, primary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -161,7 +166,7 @@ class _Header extends StatelessWidget {
           const Align(
             alignment: Alignment.center,
             child: Text(
-              'Dashboard',
+              'Maintenance Engineeer',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.5,

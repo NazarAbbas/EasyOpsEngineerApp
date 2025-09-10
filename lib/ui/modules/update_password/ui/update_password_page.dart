@@ -51,7 +51,9 @@ class UpdatePasswordPage extends GetView<UpdatePasswordController> {
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FC),
       appBar: AppBar(
@@ -62,9 +64,9 @@ class UpdatePasswordPage extends GetView<UpdatePasswordController> {
           style: TextStyle(color: Colors.white),
         ),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF4285F4), Color(0xFF6EA8FF)],
+              colors: [primary, primary],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -173,6 +175,9 @@ class _FormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
 
     return _CardShell(
       padding: EdgeInsets.symmetric(
@@ -217,7 +222,7 @@ class _FormCard extends StatelessWidget {
                     controller.isPasswordHidden.value
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: const Color(0xFF4285F4),
+                    color: primary,
                   ),
                   onPressed: controller.togglePasswordVisibility,
                 ),
@@ -229,10 +234,7 @@ class _FormCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Color(0xFF4285F4),
-                    width: 1.4,
-                  ),
+                  borderSide: BorderSide(color: primary, width: 1.4),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
@@ -258,7 +260,7 @@ class _FormCard extends StatelessWidget {
                     controller.isConfirmPasswordHidden.value
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: const Color(0xFF4285F4),
+                    color: primary,
                   ),
                   onPressed: controller.toggleConfirmPasswordVisibility,
                 ),
@@ -270,10 +272,7 @@ class _FormCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Color(0xFF4285F4),
-                    width: 1.4,
-                  ),
+                  borderSide: BorderSide(color: primary, width: 1.4),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
@@ -293,10 +292,8 @@ class _FormCard extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: isLoading ? null : controller.updatePassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4285F4),
-                  disabledBackgroundColor: const Color(
-                    0xFF4285F4,
-                  ).withOpacity(0.6),
+                  backgroundColor: primary,
+                  disabledBackgroundColor: primary.withOpacity(0.6),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

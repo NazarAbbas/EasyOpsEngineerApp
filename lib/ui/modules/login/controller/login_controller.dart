@@ -1,4 +1,5 @@
 import 'package:easy_ops/controllers/theme_controller.dart';
+import 'package:easy_ops/network/ApiService.dart';
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,13 +14,51 @@ class LoginPageController extends GetxController {
   final isLoading = false.obs; // <-- for the progress indicator
   final role = ''.obs;
   final themeController = Get.find<ThemeController>();
+  final ApiService _apiService = Get.find<ApiService>(); // ✅
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    emailController.text = "8860700947";
-    passwordController.text = "8860700947";
+    emailController.text = "satya.eazysaas@gmail.com";
+    passwordController.text = "r@Iv2Zi8iu?M";
+  }
+
+  Future<void> login() async {
+    if (isLoading.value) return;
+    // Accept either email OR phone
+    final userName = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final isEmail = _isValidEmail(userName);
+    final isPhone = _isValidPhone(password);
+    if (!isEmail && !isPhone) {
+      _err('Enter a valid email address or phone number');
+      return;
+    }
+    isLoading.value = true;
+    try {
+      final res = await _apiService.loginWithBasic(
+        username: userName,
+        password: password,
+      );
+
+      final resq = await _apiService.historyWorkOrderActivityById(
+        "HWOA-123456",
+      );
+      Get.toNamed(Routes.workOrderManagementScreen);
+      Get.snackbar(
+        'Success',
+        'Logged in successfully',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      // your code here
+    } on Exception catch (e, st) {
+      // handle/log the error
+      debugPrint('Error: $e\n$st');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void togglePasswordVisibility() {
@@ -42,59 +81,59 @@ class LoginPageController extends GetxController {
     Get.toNamed(Routes.forgotPasswordScreen, arguments: {'phone': phone});
   }
 
-  Future<void> login() async {
-    // prevent double taps while in progress
-    if (isLoading.value) return;
+  // Future<void> login() async {
+  //   // prevent double taps while in progress
+  //   if (isLoading.value) return;
 
-    final idRaw = emailController.text.trim();
-    final password = passwordController.text.trim();
+  //   final idRaw = emailController.text.trim();
+  //   final password = passwordController.text.trim();
 
-    if (idRaw.isEmpty || password.isEmpty) {
-      _err('Please fill in all fields');
-      return;
-    }
+  //   if (idRaw.isEmpty || password.isEmpty) {
+  //     _err('Please fill in all fields');
+  //     return;
+  //   }
 
-    // Accept either email OR phone
-    final isEmail = _isValidEmail(idRaw);
-    final isPhone = _isValidPhone(idRaw);
+  //   // Accept either email OR phone
+  //   final isEmail = _isValidEmail(idRaw);
+  //   final isPhone = _isValidPhone(idRaw);
 
-    if (!isEmail && !isPhone) {
-      _err('Enter a valid email address or phone number');
-      return;
-    }
+  //   if (!isEmail && !isPhone) {
+  //     _err('Enter a valid email address or phone number');
+  //     return;
+  //   }
 
-    // You can pass these to your API as separate fields if needed
-    final String? email = isEmail ? idRaw : null;
-    final String? phone = isPhone ? _normalizePhone(idRaw) : null;
+  //   // You can pass these to your API as separate fields if needed
+  //   final String? email = isEmail ? idRaw : null;
+  //   final String? phone = isPhone ? _normalizePhone(idRaw) : null;
 
-    // Dismiss keyboard
-    FocusManager.instance.primaryFocus?.unfocus();
+  //   // Dismiss keyboard
+  //   FocusManager.instance.primaryFocus?.unfocus();
 
-    // ---- Simulate API call ----
-    isLoading.value = true;
-    try {
-      await Future.delayed(const Duration(seconds: 2)); // mock latency
+  //   // ---- Simulate API call ----
+  //   isLoading.value = true;
+  //   try {
+  //     await Future.delayed(const Duration(seconds: 2)); // mock latency
 
-      // Mock “success” logic
+  //     // Mock “success” logic
 
-      //const userRoleFromApi = 'admin';
-      // role.value = userRoleFromApi;
-      themeController.setThemeByRole('admin'); //user/admin
+  //     //const userRoleFromApi = 'admin';
+  //     // role.value = userRoleFromApi;
+  //     themeController.setThemeByRole('admin'); //user/admin
 
-      // Navigate or show success
-      // Get.toNamed(Routes.workOrderScreen);
-      Get.toNamed(Routes.workOrderManagementScreen);
-      Get.snackbar(
-        'Success',
-        'Logged in successfully',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  //     // Navigate or show success
+  //     // Get.toNamed(Routes.workOrderScreen);
+  //     Get.toNamed(Routes.workOrderManagementScreen);
+  //     Get.snackbar(
+  //       'Success',
+  //       'Logged in successfully',
+  //       snackPosition: SnackPosition.TOP,
+  //       backgroundColor: Colors.green,
+  //       colorText: Colors.white,
+  //     );
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   /* ================= Helpers ================= */
 

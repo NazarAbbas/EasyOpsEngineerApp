@@ -6,7 +6,6 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/cont
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class PendingActivityArgs {
   final List<ActivityItem> initial;
@@ -21,6 +20,15 @@ class ClosureController extends GetxController {
   final Rxn<SignatureResult> signatureResult = Rxn<SignatureResult>();
   final Rxn<RcaResult> rcaResult = Rxn<RcaResult>();
   final RxList<ActivityItem> pendingActivities = <ActivityItem>[].obs;
+
+  // ⬇️ Spares to be returned (coming from next page)
+  final RxList<SpareReturnItem> sparesToReturn = <SpareReturnItem>[].obs;
+
+  // Derived totals
+  int get sparesToReturnNosTotal =>
+      sparesToReturn.fold(0, (sum, e) => sum + e.nos);
+  double get sparesToReturnCostTotal =>
+      sparesToReturn.fold(0, (sum, e) => sum + e.cost);
 
   // Dropdown
   final resolutionTypes = <String>[
@@ -44,8 +52,8 @@ class ClosureController extends GetxController {
   final sparesConsumedCost = 2000.obs;
   final sparesIssuedNos = 20.obs;
   final sparesIssuedCost = 2000.obs;
-  final sparesToReturnNos = 0.obs;
-  final sparesToReturnCost = 0.obs;
+  // final sparesToReturnNos = 0.obs;
+  //final sparesToReturnCost = 0.obs;
 
   /// Collects all data and sends to API
   Future<void> resolveWorkOrder() async {
@@ -94,9 +102,11 @@ class ClosureController extends GetxController {
           "nos": sparesIssuedNos.value,
           "cost": sparesIssuedCost.value,
         },
+        // ⬇️ include items + totals from list
         "toReturn": {
-          "nos": sparesToReturnNos.value,
-          "cost": sparesToReturnCost.value,
+          "nos": sparesToReturnNosTotal,
+          "cost": sparesToReturnCostTotal,
+          "items": sparesToReturn.map((e) => e.toJson()).toList(),
         },
       },
     };
@@ -124,4 +134,46 @@ class ClosureController extends GetxController {
       duration: const Duration(seconds: 2),
     );
   }
+}
+
+// models/spare_return_item.dart
+class SpareReturnItem {
+  final String id; // e.g. INV-001 / SP-001
+  final String name; // e.g. "Bearing 6203"
+  final int nos; // quantity to return
+  final double cost; // total cost for this line (nos * unitPrice or similar)
+
+  const SpareReturnItem({
+    required this.id,
+    required this.name,
+    required this.nos,
+    required this.cost,
+  });
+
+  SpareReturnItem copyWith({
+    String? id,
+    String? name,
+    int? nos,
+    double? cost,
+  }) => SpareReturnItem(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    nos: nos ?? this.nos,
+    cost: cost ?? this.cost,
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "nos": nos,
+    "cost": cost,
+  };
+
+  factory SpareReturnItem.fromJson(Map<String, dynamic> json) =>
+      SpareReturnItem(
+        id: json["id"] as String,
+        name: json["name"] as String,
+        nos: json["nos"] as int,
+        cost: json["cost"] as double,
+      );
 }

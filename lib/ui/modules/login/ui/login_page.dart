@@ -11,6 +11,10 @@ class LoginPage extends GetView<LoginPageController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
@@ -26,8 +30,8 @@ class LoginPage extends GetView<LoginPageController> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.5,
                       width: double.infinity,
-                      child: const CustomPaint(
-                        painter: BlueBackgroundPainter(),
+                      child: CustomPaint(
+                        painter: BlueBackgroundPainter(primary),
                       ),
                     ),
                     Center(
@@ -67,11 +71,12 @@ class LoginPage extends GetView<LoginPageController> {
 }
 
 class BlueBackgroundPainter extends CustomPainter {
-  const BlueBackgroundPainter();
+  final Color primary;
+  const BlueBackgroundPainter(this.primary);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = AppColors.primaryBlue;
+    final paint = Paint()..color = primary;
     final path = Path()
       ..lineTo(0, size.height)
       ..quadraticBezierTo(
@@ -86,7 +91,9 @@ class BlueBackgroundPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant BlueBackgroundPainter oldDelegate) {
+    return oldDelegate.primary != primary;
+  }
 }
 
 class _LoginCard extends StatelessWidget {
@@ -97,7 +104,9 @@ class _LoginCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vPad = isTablet ? 18.0 : 14.0;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Obx(() {
@@ -163,7 +172,7 @@ class _LoginCard extends StatelessWidget {
                     onPressed: controller.forgotPassword,
                     child: Text(
                       'forgot_password'.tr,
-                      style: TextStyle(color: AppColors.primaryBlue),
+                      style: TextStyle(color: primary),
                     ),
                   ),
                 ),
@@ -178,10 +187,9 @@ class _LoginCard extends StatelessWidget {
                     return ElevatedButton(
                       onPressed: loading ? null : controller.login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
+                        backgroundColor: primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.primaryBlue
-                            .withOpacity(0.6),
+                        disabledBackgroundColor: primary.withOpacity(0.6),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -297,16 +305,23 @@ class _LoginFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Text.rich(
         TextSpan(
           text: '${'help_text'.tr} ',
           style: TextStyle(color: Colors.grey[600]),
-          children: const [
+          children: [
             TextSpan(
               text: 'contact@eazyops.in',
-              style: TextStyle(color: AppColors.primaryBlue),
+              style: TextStyle(
+                color: primary,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ), // or FontWeight.bold),
             ),
           ],
         ),

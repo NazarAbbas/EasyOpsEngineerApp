@@ -2,6 +2,18 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "_fe_analyzer_shared",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-88.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "analyzer",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/analyzer-8.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/archive-4.0.7",
       "packageUri": "lib/",
@@ -74,6 +86,42 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "build",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/build-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "build_config",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/build_config-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "build_daemon",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/build_daemon-4.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "build_runner",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/build_runner-2.8.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "built_collection",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/built_collection-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "built_value",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/built_value-8.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",
@@ -86,14 +134,32 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "checked_yaml",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/checked_yaml-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
       "name": "clock",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/clock-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
+      "name": "code_builder",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/code_builder-4.10.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "collection",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/collection-1.19.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "convert",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/convert-3.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -114,6 +180,12 @@
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.8",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "dart_style",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/dart_style-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "dev_build",
@@ -236,6 +308,42 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "flutter_secure_storage",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_linux",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-1.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_macos",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_platform_interface",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_web",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_windows",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_spinkit",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/flutter_spinkit-5.2.2",
       "packageUri": "lib/",
@@ -266,6 +374,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "frontend_server_client",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/frontend_server_client-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "get",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/get-4.7.2",
       "packageUri": "lib/",
@@ -278,10 +392,28 @@
       "languageVersion": "2.16"
     },
     {
+      "name": "glob",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/glob-2.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "graphs",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/graphs-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "http",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/http-0.13.6",
       "packageUri": "lib/",
       "languageVersion": "2.19"
+    },
+    {
+      "name": "http_multi_server",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/http_multi_server-3.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "http_parser",
@@ -350,6 +482,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "io",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/io-1.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "js",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
@@ -360,6 +498,12 @@
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/json_annotation-4.9.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "json_serializable",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/json_serializable-6.11.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
     },
     {
       "name": "leak_tracker",
@@ -393,9 +537,15 @@
     },
     {
       "name": "logger",
-      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/logger-1.4.0",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/logger-2.6.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "logging",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/logging-1.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "matcher",
@@ -426,6 +576,12 @@
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/open_filex-4.7.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "package_config",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/package_config-2.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "path",
@@ -518,10 +674,22 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "protobuf",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/protobuf-4.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "pub_semver",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/pub_semver-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "pubspec_parse",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/pubspec_parse-1.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "record",
@@ -584,6 +752,24 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "retrofit_generator",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/retrofit_generator-10.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "shelf",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/shelf-1.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "shelf_web_socket",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/shelf_web_socket-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "signature",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/signature-5.5.0",
       "packageUri": "lib/",
@@ -598,6 +784,18 @@
     {
       "name": "sky_engine",
       "rootUri": "file:///Users/nazarabbas/Documents/flutter/bin/cache/pkg/sky_engine",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "source_gen",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/source_gen-4.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "source_helper",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/source_helper-1.3.8",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -678,6 +876,12 @@
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/stream_channel-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "stream_transform",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/stream_transform-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
     },
     {
       "name": "string_scanner",
@@ -800,10 +1004,34 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "watcher",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/watcher-1.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
       "name": "web",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/web-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "web_socket",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/web_socket-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "web_socket_channel",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "win32",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/win32-5.14.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
     },
     {
       "name": "xdg_directories",

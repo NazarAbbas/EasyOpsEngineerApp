@@ -1,7 +1,8 @@
-import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
+// lib/ui/modules/maintenance_work_order/return_spare_parts/ui/return_spares_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
 
 class ReturnSparesPage extends GetView<ReturnSparesController> {
   const ReturnSparesPage({super.key});
@@ -155,10 +156,8 @@ class _SpareRow extends GetView<ReturnSparesController> {
       child: Row(
         children: [
           const SizedBox(width: 12),
-          // Part details
           Expanded(child: _PartLabel(item: item)),
           const SizedBox(width: 12),
-          // Stepper
           Obx(() {
             final canDec = item.returning.value > 0;
             final canInc = item.returning.value < item.requested;
@@ -184,7 +183,6 @@ class _PartLabel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Name (bold)
         Text(
           item.name,
           style: const TextStyle(
@@ -194,7 +192,6 @@ class _PartLabel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        // Code (semi-muted)
         Text(
           item.code,
           style: const TextStyle(
@@ -204,7 +201,6 @@ class _PartLabel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        // requested note
         Text(
           '${item.requested.toString().padLeft(2, '0')} nos requested',
           style: const TextStyle(

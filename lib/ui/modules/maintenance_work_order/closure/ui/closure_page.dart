@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:easy_ops/constants/values/app_colors.dart';
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/closure/controller/closure_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
@@ -73,6 +74,9 @@ class _BottomBar extends GetView<ClosureController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return SafeArea(
       top: false,
       child: Padding(
@@ -100,11 +104,11 @@ class _BottomBar extends GetView<ClosureController> {
                   onPressed: null,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(color: Color(0xFFE2E8F0)),
+                    side: BorderSide(color: primary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    foregroundColor: const Color(0xFF1F2430),
+                    foregroundColor: Colors.black,
                     backgroundColor: Colors.white,
                   ),
                   child: const Row(
@@ -132,7 +136,7 @@ class _BottomBar extends GetView<ClosureController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    backgroundColor: const Color(0xFF2F6BFF),
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
                     elevation: 1.5,
                   ),
@@ -421,11 +425,11 @@ class _SparesConsumedCard extends GetView<ClosureController> {
                   const SizedBox(height: 12),
                   _KVRow(
                     leftTitle: 'Spares to be Returned',
-                    leftValue: '${controller.sparesToReturnNos.value} nos',
+                    leftValue: '${controller.sparesToReturnNosTotal} nos',
                     rightTitle: 'Cost',
-                    rightValue: controller.sparesToReturnCost.value == 0
+                    rightValue: controller.sparesToReturnCostTotal == 0
                         ? '₹ -'
-                        : '₹ ${controller.sparesToReturnCost.value}',
+                        : '₹ ${controller.sparesToReturnCostTotal}',
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -439,12 +443,24 @@ class _SparesConsumedCard extends GetView<ClosureController> {
                           ),
                         ),
                       ),
+                      // _SparesConsumedCard onTap for return spares
                       _IconChip(
                         icon: CupertinoIcons.wrench_fill,
                         bg: const Color(0xFFEFF4FF),
                         fg: _C.primary,
-                        onTap: () {
-                          Get.toNamed(Routes.returnSpareScreen);
+                        onTap: () async {
+                          // Navigate with current list as initial value
+                          final res = await Get.toNamed(
+                            Routes.returnSpareScreen,
+                            arguments: List<SpareReturnItem>.from(
+                              controller.sparesToReturn,
+                            ),
+                          );
+
+                          // Expect the next page to return `List<SpareReturnItem>`
+                          if (res is List<SpareReturnItem>) {
+                            controller.sparesToReturn.assignAll(res);
+                          }
                         },
                       ),
                     ],

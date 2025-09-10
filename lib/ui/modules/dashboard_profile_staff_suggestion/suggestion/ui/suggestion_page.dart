@@ -7,10 +7,13 @@ class SuggestionsPage extends GetView<SuggestionsController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2F6BFF),
+        backgroundColor: primary,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -49,7 +52,7 @@ class SuggestionsPage extends GetView<SuggestionsController> {
             width: double.infinity,
             child: FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF2F6BFF),
+                backgroundColor: primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),

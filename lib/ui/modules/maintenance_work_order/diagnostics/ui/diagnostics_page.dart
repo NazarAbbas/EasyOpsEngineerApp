@@ -15,6 +15,7 @@ class DiagnosticsPage extends GetView<DiagnosticsController> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = controller.isLoading.value;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF3C4354),
@@ -54,14 +55,17 @@ class DiagnosticsPage extends GetView<DiagnosticsController> {
           ],
         );
       }),
-      bottomNavigationBar: _BottomActions(
-        onEnd: () => {
-          controller.isLoading.value = true,
-          const LoadingOverlay(message: 'Please wait...'),
-          controller.endWork(),
-          controller.isLoading.value = false,
-        },
 
+      bottomNavigationBar: _BottomActions(
+        onEnd: () {
+          // show overlay + top bar; no set literal!
+          controller.isLoading.value = true;
+          LoadingOverlay(message: 'Ending work...');
+          controller.endWork().whenComplete(() {
+            controller.isLoading.value = false;
+            //LoadingOverlay.hide();
+          });
+        },
         onHold: controller.hold,
         onReassign: controller.reassign,
         onCancel: controller.cancel,

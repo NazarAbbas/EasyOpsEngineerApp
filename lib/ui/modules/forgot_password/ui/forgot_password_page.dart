@@ -67,6 +67,9 @@ class _ForgotPasswordButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     final c = Get.find<ForgotPasswordController>();
     final isTablet = MediaQuery.of(context).size.width > 600;
 
@@ -87,12 +90,10 @@ class _ForgotPasswordButtons extends StatelessWidget {
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: canResend
-                      ? AppColors.primaryBlue
-                      : AppColors.primaryBlue.withOpacity(0.6),
+                      ? primary
+                      : primary.withOpacity(0.6),
                   side: BorderSide(
-                    color: canResend
-                        ? AppColors.primaryBlue
-                        : AppColors.primaryBlue.withOpacity(0.4),
+                    color: canResend ? primary : primary.withOpacity(0.4),
                   ),
                   minimumSize: Size(double.infinity, isTablet ? 55 : 45),
                   shape: RoundedRectangleBorder(
@@ -129,7 +130,7 @@ class _ForgotPasswordButtons extends StatelessWidget {
               flex: isTablet ? 2 : 1,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
+                  backgroundColor: primary,
                   minimumSize: Size(double.infinity, isTablet ? 55 : 45),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -190,7 +191,9 @@ class _ForgotPasswordInfoText extends StatelessWidget {
     final c = Get.find<ForgotPasswordController>();
     final w = MediaQuery.of(context).size.width;
     final fs = w > 600 ? 18.0 : 14.0;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Obx(
       () => RichText(
         textAlign: TextAlign.center,
@@ -207,7 +210,7 @@ class _ForgotPasswordInfoText extends StatelessWidget {
               text: c.remainingLabel, // mm:ss or ss based on your controller
               style: TextStyle(
                 fontSize: fs,
-                color: AppColors.primaryBlue,
+                color: primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -223,6 +226,9 @@ class _ForgotPasswordOtpField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     final c = Get.find<ForgotPasswordController>();
     final w = MediaQuery.of(context).size.width;
     final isTablet = w > 600;
@@ -239,7 +245,7 @@ class _ForgotPasswordOtpField extends StatelessWidget {
           animationType: AnimationType.fade,
           textStyle: TextStyle(
             fontSize: isTablet ? 24 : 20,
-            color: AppColors.primaryBlue,
+            color: primary,
             fontWeight: FontWeight.w600,
           ),
           pinTheme: PinTheme(
@@ -247,8 +253,8 @@ class _ForgotPasswordOtpField extends StatelessWidget {
             fieldHeight: isTablet ? 70 : 50,
             fieldWidth: isTablet ? 60 : 40,
             inactiveColor: Colors.grey,
-            activeColor: AppColors.primaryBlue,
-            selectedColor: AppColors.primaryBlue,
+            activeColor: primary,
+            selectedColor: primary,
           ),
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           onChanged: (v) => c.otpCode.value = v,

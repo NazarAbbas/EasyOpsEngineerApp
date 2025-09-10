@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		pCEo5DfOEM8rvlSl7l69HVQzUHo=
+		nGhL5MTyYYOh8QphquXM4api3zw=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		OW6wQwQPaCJ8fRF5nNUqB75QFSk=
+		8nl8yrCuCrbXs+VuoW1NZvUiXfk=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		0u/Nzq75uYp22i3yJJYwfd324XI=
+		Xo6A9Y5vpCdpruQZtkunfzQ3QlE=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
 		<data>
@@ -342,7 +342,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		17qevetJjh15SISjkC/mMWWqDaQ=
+		1xOCtQoVEHQSZKLvVBiTym4DKEI=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -468,6 +468,26 @@
 		<data>
 		50wekvKqM+0Z0DX4DHl5qV81nlo=
 		</data>
+		<key>Frameworks/flutter_secure_storage.framework/Info.plist</key>
+		<data>
+		dwflLAjTftSVh4WVwoB2wegHBTI=
+		</data>
+		<key>Frameworks/flutter_secure_storage.framework/_CodeSignature/CodeResources</key>
+		<data>
+		xq/b1QjYIEH8Zq5QeBSDAXf8THE=
+		</data>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage</key>
+		<data>
+		Ji64g30uwfnyxdY7AXFGtAcXblk=
+		</data>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage.bundle/Info.plist</key>
+		<data>
+		m4ysiF72x9NdiTtbHTV/wOTYxe8=
+		</data>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage.bundle/PrivacyInfo.xcprivacy</key>
+		<data>
+		YIiJ5tHvqBeSpBm2mcfVZdaGz3E=
+		</data>
 		<key>Frameworks/image_picker_ios.framework/Info.plist</key>
 		<data>
 		uZ9g2zAvGl/ofkRqEx8HioP89g4=
@@ -590,7 +610,7 @@
 		</data>
 		<key>Runner.debug.dylib</key>
 		<data>
-		QrjbhSJSRNYjbgReDKcZY75VPto=
+		LfP40rxjvsgzmzTFbgheIYO0BeA=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
@@ -673,7 +693,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			MhcE3ZUjJwsKMW0BwnR53kJCHXDOf62VHsBiDL20PEU=
+			OBSny5BbJzvSR439fIiQDAv7VA8kK7n/UlzUd5EglHI=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -687,7 +707,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			72A+t4jX+o5AqidccmpRF3ZiGbJSlSG0vQ5k0AQn610=
+			mAw3wf6AAlA38io5re1nZlWhnnyy0KBKW/LIIQYH4cc=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
@@ -715,7 +735,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			UTjAy2yjMuTgFFfuP23W76b2TECk0KDy16sVA4Wf2D0=
+			92Lzm23Gg0lohtRcSPs0t2e+wHeKQIFrSB/vWMWjvFU=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/NativeAssetsManifest.json</key>
@@ -1191,7 +1211,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yGf2WJx//SUplRpvv5QNJzcEArNa1z79W0nrhCh7WNk=
+			AEvy7vUSo+94DSsfW4s2lOaK9K+l56SMLfIAzj5oALY=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -1411,6 +1431,41 @@
 			z3ynLzi6mAwb3GMwGNCj07sQvCmWihzy32ktaYWooG4=
 			</data>
 		</dict>
+		<key>Frameworks/flutter_secure_storage.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aOOeoqT83ZHj8rgkP3mInC9/XuzqvrnLeEdJCkWDIh0=
+			</data>
+		</dict>
+		<key>Frameworks/flutter_secure_storage.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AOVtGkqQltPZbKVaY+rEvYw07c2tqdojNGZqltvwAk8=
+			</data>
+		</dict>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0BUSOZ/7v3JS/jFFORhia0h+VzGvaoLKV4ma0aAJ2bo=
+			</data>
+		</dict>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage.bundle/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xpctosnZyCjagDiADu/koj2dJByK/yCkVFl5q6zLwdw=
+			</data>
+		</dict>
+		<key>Frameworks/flutter_secure_storage.framework/flutter_secure_storage.bundle/PrivacyInfo.xcprivacy</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RyJqKWCN8gatChEOav61p3/1dawd+cdr/bLW37P6/tE=
+			</data>
+		</dict>
 		<key>Frameworks/image_picker_ios.framework/Info.plist</key>
 		<dict>
 			<key>hash2</key>
@@ -1611,7 +1666,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			3Fu9hYN5WN8QLhwTEbVyr9Jp4JcXq+Lgdq81HGxNXGU=
+			IieMuTu1GbbkiORFvebqipVAAN40AKCrMsd5ZoN3s20=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>

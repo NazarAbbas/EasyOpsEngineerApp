@@ -33,32 +33,34 @@ class DiagnosticsController extends GetxController {
   }
 
   Future<void> endWork() async {
-    //isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1));
-    //isLoading.value = false;
+    // isLoading.value = true;
+    // await Future.delayed(const Duration(seconds: 1));
+    // isLoading.value = false;
     Get.toNamed(Routes.closureScreen);
     //Get.snackbar('Success', 'Work ended');
   }
 
   Future<void> hold() async {
-    isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 900));
-    isLoading.value = false;
-    Get.snackbar('Updated', 'Work order put on Hold');
+    //isLoading.value = true;
+    //await Future.delayed(const Duration(milliseconds: 900));
+    Get.toNamed(Routes.holdWorkOrderScreen);
+    //isLoading.value = false;
+    //Get.snackbar('Updated', 'Work order put on Hold');
   }
 
   Future<void> reassign() async {
-    isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 900));
-    isLoading.value = false;
-    Get.snackbar('Updated', 'Reassignment started');
+    //isLoading.value = true;
+    //await Future.delayed(const Duration(milliseconds: 900));
+    Get.toNamed(Routes.reassignWorkOrderScreen);
+    //isLoading.value = false;
+    //Get.snackbar('Updated', 'Reassignment started');
   }
 
   Future<void> cancel() async {
-    isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 900));
+    // isLoading.value = true;
+    //await Future.delayed(const Duration(milliseconds: 900));
     Get.toNamed(Routes.cancelWorkOrderFromDiagnosticsScreen);
-    isLoading.value = false;
+    //isLoading.value = false;
     // Get.snackbar('Updated', 'Work order canceled');
   }
 

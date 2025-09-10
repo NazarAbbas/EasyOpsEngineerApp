@@ -1,4 +1,5 @@
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,11 +8,14 @@ class SupportPage extends GetView<SupportController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     final c = controller;
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2F6BFF),
+        backgroundColor: primary,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -130,8 +134,8 @@ class SupportPage extends GetView<SupportController> {
                             icon: const Icon(Icons.mail_outline_rounded),
                             label: const Text('via Email'),
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFF2F6BFF),
-                              side: const BorderSide(color: Color(0xFF2F6BFF)),
+                              foregroundColor: primary,
+                              side: BorderSide(color: primary),
                               padding: const EdgeInsets.symmetric(
                                 vertical: 14,
                                 horizontal: 10,
@@ -149,7 +153,7 @@ class SupportPage extends GetView<SupportController> {
                             icon: const Icon(Icons.call_rounded),
                             label: const Text('via Call'),
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF2F6BFF),
+                              backgroundColor: primary,
                               padding: const EdgeInsets.symmetric(
                                 vertical: 14,
                                 horizontal: 10,

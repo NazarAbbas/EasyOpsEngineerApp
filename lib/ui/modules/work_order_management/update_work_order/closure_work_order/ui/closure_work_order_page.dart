@@ -22,7 +22,9 @@ class ClosureWorkOrderPage extends GetView<ClosureWorkOrderController> {
     final hPad = isTablet ? 18.0 : 14.0;
     final headerH = isTablet ? 120.0 : 110.0;
     final btnH = isTablet ? 56.0 : 52.0;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
 
@@ -47,7 +49,7 @@ class ClosureWorkOrderPage extends GetView<ClosureWorkOrderController> {
                   style: OutlinedButton.styleFrom(
                     minimumSize: Size.fromHeight(btnH),
                     side: const BorderSide(color: _C.primary, width: 1.4),
-                    foregroundColor: _C.primary,
+                    foregroundColor: primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -66,7 +68,7 @@ class ClosureWorkOrderPage extends GetView<ClosureWorkOrderController> {
                 FilledButton(
                   style: FilledButton.styleFrom(
                     minimumSize: Size.fromHeight(btnH),
-                    backgroundColor: _C.primary,
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/constants/constant.dart';
 import 'package:easy_ops/constants/dependency_injection/dependency_injection.dart';
 import 'package:easy_ops/constants/values/app_language.dart';
+import 'package:easy_ops/network/auth_store.dart';
 import 'package:easy_ops/route_managment/all_pages.dart';
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:easy_ops/ui/binding/screen_binding.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'controllers/theme_controller.dart';
-import 'network/my_http_overrides.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,11 +26,11 @@ void main() async {
   );
   await DependencyInjection.init();
   await GetStorage.init();
-  HttpOverrides.global = MyHttpOverrides();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // HttpOverrides.global = MyHttpOverrides();
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -41,8 +41,9 @@ void main() async {
 
   final themeCtrl = Get.put(ThemeController(), permanent: true);
   // Example: set role once you know it (e.g., after login/api)
-  const userRoleFromApi = 'user';
+  const userRoleFromApi = 'admin';
   themeCtrl.setThemeByRole(userRoleFromApi);
+  await AuthStore.instance.init(); // restores token into memory
   runApp(MyApp());
 }
 

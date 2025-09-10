@@ -17,6 +17,9 @@ class SplashPage extends StatelessWidget {
     final iconSize = isTablet ? size.width * 0.1 : size.width * 0.15;
     final fontSize = isTablet ? size.width * 0.08 : size.width * 0.12;
     final spacing = isTablet ? 16.0 : 8.0;
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       body: Container(
@@ -24,7 +27,7 @@ class SplashPage extends StatelessWidget {
         height: size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade400, Colors.blue.shade700],
+            colors: [primary, primary],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
