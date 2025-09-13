@@ -1,4 +1,4 @@
-// start_work_order_page.dart
+// ✅ NOTE: no import of request_spares_controller.dart here
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/route_managment/routes.dart';
@@ -6,11 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-// 👇 for optional iOS-safe remote→local audio fallback
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/models/spares_models.dart';
 
 class StartWorkOrderPage extends GetView<StartWorkOrderController> {
   const StartWorkOrderPage({super.key});
@@ -27,17 +27,14 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
 
-    // key used to anchor the popup menu to the button
     final otherBtnKey = GlobalKey();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
-
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(headerH),
         child: _GradientHeader(title: 'Work Order Details', isTablet: isTablet),
       ),
-
       bottomNavigationBar: SafeArea(
         top: false,
         child: Padding(
@@ -67,7 +64,7 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
               const SizedBox(width: 12),
               Expanded(
                 child: FilledButton(
-                  onPressed: controller.StartOrder,
+                  onPressed: controller.startOrder,
                   style: FilledButton.styleFrom(
                     minimumSize: Size.fromHeight(btnH),
                     backgroundColor: primary,
@@ -87,8 +84,6 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
           ),
         ),
       ),
-
-      // No TabBar, just a single scrollable page
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 16),
         child: Column(
@@ -96,15 +91,14 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
             _SummaryHeroCard(),
             _OperatorInfoCard(),
             _WorkOrderInfoCard(),
-            _MediaCard(), // 👈 full-width card with images + audio stacked
-            _SparesCard(),
+            _MediaCard(),
+            _SparesCard(), // shows placed items here
           ],
         ),
       ),
     );
   }
 
-  /// Anchored popup like the screenshot
   Future<void> _showOtherOptionsMenu(
     BuildContext context,
     GlobalKey anchorKey,
@@ -116,19 +110,14 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
     final btnSize = button.size;
     final btnTopLeft = button.localToGlobal(Offset.zero, ancestor: overlay);
 
-    // ---- Menu sizing so we can place it ABOVE the button ----
     const itemHeight = 40.0;
     const verticalPadding = 8.0;
-    const gap = 6.0; // small space between button and menu
+    const gap = 6.0;
     final menuHeight = (2 * itemHeight) + (2 * verticalPadding);
 
-    // target top-left corner for the menu so it sits above the button
     double top = btnTopLeft.dy - menuHeight - gap;
-
-    // clamp to stay on screen
     top = top.clamp(8.0, overlay.size.height - menuHeight - 8.0);
 
-    // align left edges with the button
     final left = btnTopLeft.dx;
     final right = overlay.size.width - left - btnSize.width;
 
@@ -171,8 +160,7 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
   }
 }
 
-/* ───────────────────────── Header ───────────────────────── */
-
+/* ───────── Header ───────── */
 class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool isTablet;
@@ -188,13 +176,10 @@ class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
+
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [primary, primary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: LinearGradient(colors: [primary, primary]),
       ),
       padding: EdgeInsets.fromLTRB(12, isTablet ? 12 : 10, 12, 12),
       child: SafeArea(
@@ -212,16 +197,16 @@ class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
                 tooltip: 'Back',
               ),
             ),
-            Expanded(
+            const Expanded(
               child: Text(
-                title,
+                'Work Order Details',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
-                  fontSize: isTablet ? 20 : 18,
+                  fontSize: 18,
                 ),
               ),
             ),
@@ -233,8 +218,7 @@ class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-/* ───────────────────────── Hero Summary Card ───────────────────────── */
-
+/* ───────── Hero Card ───────── */
 class _SummaryHeroCard extends StatelessWidget {
   const _SummaryHeroCard();
 
@@ -244,16 +228,13 @@ class _SummaryHeroCard extends StatelessWidget {
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
+
     return Obx(() {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          gradient: LinearGradient(
-            colors: [primary, primary],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: LinearGradient(colors: [primary, primary]),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFF2F6BFF).withOpacity(0.22),
@@ -266,146 +247,46 @@ class _SummaryHeroCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title + chips
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    c.subject.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 17.5,
-                      height: 1.22,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _SolidPill(
-                      text: c.priority.value,
-                      color: const Color(0xFFEF4444),
-                    ),
-                    const SizedBox(height: 6),
-                    const _GlassChip(
-                      text: 'In Progress',
-                      icon: CupertinoIcons.checkmark_seal_fill,
-                    ),
-                    const SizedBox(height: 6),
-                    _GlassChip(
-                      text: c.elapsed.value,
-                      icon: CupertinoIcons.time,
-                    ),
-                  ],
-                ),
-              ],
+            Text(
+              c.subject.value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 17.5,
+                height: 1.22,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Wrap(
-              spacing: 8,
+              spacing: 10,
               runSpacing: 8,
               children: [
-                _MetaChip(text: c.woCode.value, icon: CupertinoIcons.number),
-                _MetaChip(text: c.time.value, icon: CupertinoIcons.clock),
-                _MetaChip(text: c.date.value, icon: CupertinoIcons.calendar),
-                _MetaChip(
-                  text: c.category.value,
-                  icon: CupertinoIcons.gear_alt_fill,
-                ),
+                _chip(c.woCode.value),
+                _chip(c.date.value),
+                _chip(c.time.value),
+                _chip(c.category.value),
               ],
             ),
-            const SizedBox(height: 12),
           ],
         ),
       );
     });
   }
-}
 
-class _GlassChip extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _GlassChip({required this.text, required this.icon});
-
-  @override
-  Widget build(BuildContext context) => Container(
+  Widget _chip(String t) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.16),
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.white.withOpacity(0.25)),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: Colors.white),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _MetaChip extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _MetaChip({required this.text, required this.icon});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.14),
+      color: Colors.white.withOpacity(0.15),
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.white.withOpacity(0.22)),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: Colors.white),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _SolidPill extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _SolidPill({required this.text, required this.color});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(22),
     ),
     child: Text(
-      text,
+      t,
       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
     ),
   );
 }
 
-/* ───────────────────────── Operator Info Card ───────────────────────── */
-
+/* ───────── Sections ───────── */
 class _OperatorInfoCard extends StatelessWidget {
   const _OperatorInfoCard();
 
@@ -424,16 +305,11 @@ class _OperatorInfoCard extends StatelessWidget {
             ),
             if (c.operatorOpen.value) ...[
               const SizedBox(height: 10),
-              _InfoRow(
-                label: 'Reported By',
-                value: c.reportedBy.value,
-                onCall: () {},
-              ),
+              _InfoRow(label: 'Reported By', value: c.reportedBy.value),
               const SizedBox(height: 8),
               _InfoRow(
                 label: 'Maintenance Manager',
                 value: c.maintenanceManager.value,
-                onCall: () {},
               ),
             ],
           ],
@@ -442,8 +318,6 @@ class _OperatorInfoCard extends StatelessWidget {
     );
   }
 }
-
-/* ───────────────────────── Work Order Info Card ───────────────────────── */
 
 class _WorkOrderInfoCard extends StatelessWidget {
   const _WorkOrderInfoCard();
@@ -464,32 +338,14 @@ class _WorkOrderInfoCard extends StatelessWidget {
             ),
             if (c.workInfoOpen.value) ...[
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.exclamationmark_triangle_fill,
-                    size: 14,
-                    color: Color(0xFFE25555),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      c.assetLine.value,
-                      style: const TextStyle(
-                        color: _C.text,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _IconChip(
-                    icon: CupertinoIcons.arrow_clockwise,
-                    bg: const Color(0xFFEFF3FF),
-                    fg: _C.primary,
-                  ),
-                ],
+              Text(
+                c.assetLine.value,
+                style: const TextStyle(
+                  color: _C.text,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 c.assetLocation.value,
                 style: const TextStyle(
@@ -511,8 +367,7 @@ class _WorkOrderInfoCard extends StatelessWidget {
   }
 }
 
-/* ───────────────────────── Media Card (Images + Audio) ───────────────────────── */
-
+/* ───────── Media Card (images + audio) ───────── */
 class _MediaCard extends StatelessWidget {
   const _MediaCard();
 
@@ -542,23 +397,18 @@ class _MediaCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-
                 if (photos.isNotEmpty)
                   SizedBox(
-                    width: box.maxWidth, // full width wrap of thumbs
+                    width: box.maxWidth,
                     child: Wrap(
                       spacing: 10,
                       runSpacing: 10,
                       children: photos.map((p) => _Thumb(path: p)).toList(),
                     ),
                   ),
-
                 if (voice.isNotEmpty) ...[
                   const SizedBox(height: 12),
-                  _AudioBubble(
-                    path: voice,
-                    width: box.maxWidth, // stretch audio bar across the card
-                  ),
+                  _AudioBubble(path: voice, width: box.maxWidth),
                 ],
               ],
             );
@@ -569,8 +419,7 @@ class _MediaCard extends StatelessWidget {
   }
 }
 
-/* ───────────────────────── Spares Card ───────────────────────── */
-
+/* ───────── Spares Card (shows placed items) ───────── */
 class _SparesCard extends StatelessWidget {
   const _SparesCard();
 
@@ -580,41 +429,116 @@ class _SparesCard extends StatelessWidget {
     return _Card(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Obx(() {
-        final open = c.needSparesOpen.value;
-        return InkWell(
-          onTap: c.toggleSpares,
-          borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              const Icon(
-                CupertinoIcons.question_circle,
-                color: _C.muted,
-                size: 18,
+        final lines = c.requestedSpares;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: c.needSpares,
+              borderRadius: BorderRadius.circular(12),
+              child: Row(
+                children: const [
+                  Icon(
+                    CupertinoIcons.question_circle,
+                    color: _C.muted,
+                    size: 18,
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Need Spares?',
+                      style: TextStyle(
+                        color: _C.text,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  _IconChip(
+                    icon: CupertinoIcons.settings,
+                    bg: Color(0xFFEFF3FF),
+                    fg: _C.primary,
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  'Need Spares?',
-                  style: TextStyle(color: _C.text, fontWeight: FontWeight.w800),
-                ),
+            ),
+            if (lines.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              const Divider(height: 1, color: Color(0xFFE6EBF3)),
+              const SizedBox(height: 6),
+              const Text(
+                'Requested Spares',
+                style: TextStyle(color: _C.muted, fontWeight: FontWeight.w700),
               ),
-              _IconChip(
-                icon: open
-                    ? CupertinoIcons.chevron_up
-                    : CupertinoIcons.chevron_down,
-                bg: const Color(0xFFEFF3FF),
-                fg: _C.primary,
+              const SizedBox(height: 6),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: lines.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, i) => _SpareLine(line: lines[i]),
               ),
             ],
-          ),
+          ],
         );
       }),
     );
   }
 }
 
-/* ───────────────────────── Small Widgets / Helpers ───────────────────────── */
+class _SpareLine extends StatelessWidget {
+  const _SpareLine({required this.line});
+  final CartLine line;
 
+  @override
+  Widget build(BuildContext context) {
+    final title = line.item.name.isNotEmpty ? line.item.name : line.item.code;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: _C.text,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Text(
+                line.item.code,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: _C.text),
+              ),
+              if ((line.cat1 ?? '').isNotEmpty || (line.cat2 ?? '').isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    'Cat 1: ${line.cat1 ?? "-"}   ·   Cat 2: ${line.cat2 ?? "-"}',
+                    style: const TextStyle(color: _C.muted, fontSize: 12),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '${line.qty.toString().padLeft(2, '0')} nos',
+          style: const TextStyle(
+            color: _C.primary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/* ───────── Shared small widgets / helpers ───────── */
 class _CardHeader extends StatelessWidget {
   final String title;
   final bool open;
@@ -652,23 +576,16 @@ class _CardHeader extends StatelessWidget {
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
-  final VoidCallback? onCall;
-  const _InfoRow({required this.label, required this.value, this.onCall});
+  const _InfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     const labelStyle = TextStyle(color: _C.muted, fontWeight: FontWeight.w700);
     const valueStyle = TextStyle(color: _C.text, fontWeight: FontWeight.w800);
-
     return Row(
       children: [
         SizedBox(width: 140, child: Text(label, style: labelStyle)),
         Expanded(child: Text(value, style: valueStyle)),
-        IconButton(
-          onPressed: onCall,
-          icon: const Icon(CupertinoIcons.phone, color: _C.primary, size: 18),
-          tooltip: 'Call',
-        ),
       ],
     );
   }
@@ -720,8 +637,7 @@ class _IconChip extends StatelessWidget {
   );
 }
 
-/* ───────────────────────── Media helpers ───────────────────────── */
-
+/* ====== Media helpers (images + audio) ====== */
 bool _isAsset(String p) => p.startsWith('assets/');
 bool _isUrl(String p) => p.startsWith('http://') || p.startsWith('https://');
 bool _isFilePath(String p) =>
@@ -766,10 +682,8 @@ class _Thumb extends StatelessWidget {
       return FutureBuilder<bool>(
         future: _assetExists(path),
         builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done ||
-              snap.data != true) {
+          if (snap.connectionState != ConnectionState.done || snap.data != true)
             return base;
-          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.asset(path, width: 88, height: 64, fit: BoxFit.cover),
@@ -801,11 +715,9 @@ class _Thumb extends StatelessWidget {
   }
 }
 
-/* ───────────────────────── Audio bubble (with slider + iOS fallback) ───────────────────────── */
-
 class _AudioBubble extends StatefulWidget {
   final String path; // asset / file / url
-  final double? width; // full width if null
+  final double? width;
   const _AudioBubble({required this.path, this.width, super.key});
 
   @override
@@ -819,7 +731,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   Source? _currentSource;
-  String? _localCachePath; // used if remote fails and we download
+  String? _localCachePath;
 
   Source? _buildSource(String p) {
     if (p.isEmpty) return null;
@@ -833,10 +745,8 @@ class _AudioBubbleState extends State<_AudioBubble> {
   void initState() {
     super.initState();
     _player = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
-
     _player.onDurationChanged.listen((d) {
-      if (!mounted) return;
-      setState(() => _duration = d);
+      if (mounted) setState(() => _duration = d);
     });
     _player.onPositionChanged.listen((p) {
       if (!mounted) return;
@@ -844,13 +754,12 @@ class _AudioBubbleState extends State<_AudioBubble> {
       setState(() => _position = p);
     });
     _player.onPlayerComplete.listen((_) {
-      if (!mounted) return;
-      setState(() {
-        _isPlaying = false;
-        _position = _duration;
-      });
+      if (mounted)
+        setState(() {
+          _isPlaying = false;
+          _position = _duration;
+        });
     });
-
     _preload();
   }
 
@@ -862,11 +771,8 @@ class _AudioBubbleState extends State<_AudioBubble> {
       final d = await _player.getDuration();
       if (mounted && d != null) setState(() => _duration = d);
       _currentSource = src;
-    } catch (e) {
-      // iOS sometimes fails on remote streams; fall back to temp file
-      if (src is UrlSource) {
-        await _downloadAndUseLocal(src.url);
-      }
+    } catch (_) {
+      if (src is UrlSource) await _downloadAndUseLocal(src.url);
     }
   }
 
@@ -885,12 +791,8 @@ class _AudioBubbleState extends State<_AudioBubble> {
         final d = await _player.getDuration();
         if (mounted && d != null) setState(() => _duration = d);
         _currentSource = localSrc;
-      } else {
-        debugPrint('Audio download failed: ${resp.statusCode}');
       }
-    } catch (e) {
-      debugPrint('Audio download exception: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -914,13 +816,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
         setState(() => _isPlaying = false);
       } else {
         var src = _currentSource ?? _buildSource(widget.path);
-
-        // prefer local cache if available
         if (_localCachePath != null) {
           src = DeviceFileSource(_localCachePath!);
           _currentSource = src;
         }
-
         try {
           if (_position == Duration.zero) {
             await _player.stop();
@@ -928,24 +827,19 @@ class _AudioBubbleState extends State<_AudioBubble> {
               await _player.setSource(src);
               _currentSource = src;
             }
-            await _player.resume(); // start from 0
+            await _player.resume();
           } else {
             await _player.resume();
           }
           setState(() => _isPlaying = true);
-        } catch (playErr) {
-          // last-chance: if remote stream fails here, download + use local
+        } catch (_) {
           if (src is UrlSource) {
             await _downloadAndUseLocal(src.url);
             await _player.resume();
             setState(() => _isPlaying = true);
-          } else {
-            rethrow;
           }
         }
       }
-    } catch (e) {
-      debugPrint('Audio toggle error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -981,7 +875,6 @@ class _AudioBubbleState extends State<_AudioBubble> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Controls row
             Row(
               children: [
                 _isLoading
@@ -1023,7 +916,6 @@ class _AudioBubbleState extends State<_AudioBubble> {
                 ),
               ],
             ),
-            // Slim slider
             SliderTheme(
               data: const SliderThemeData(
                 trackHeight: 2,
@@ -1044,8 +936,7 @@ class _AudioBubbleState extends State<_AudioBubble> {
   }
 }
 
-/* ───────────────────────── Theme ───────────────────────── */
-
+/* ───────── Local theme ───────── */
 class _C {
   static const primary = Color(0xFF2F6BFF);
   static const muted = Color(0xFF7C8698);

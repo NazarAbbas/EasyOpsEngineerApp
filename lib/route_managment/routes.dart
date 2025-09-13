@@ -44,4 +44,6 @@ class Routes {
   static String returnSpareScreen = '/RETURN_SPARE_SCREEN';
   static String rcaAnalysisScreen = '/RCA_ANALYSIS_SCREEN';
   static String pendingActivityScreen = '/PENDING_ACTIVITY_SCREEN';
+  static String requestSparesScreen = '/REQUEST_SPARES_SCREEN';
+  static String sparesCartScreen = '/SPARES_CART_SCREEN';
 }

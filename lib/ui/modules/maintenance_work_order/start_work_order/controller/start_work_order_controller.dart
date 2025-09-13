@@ -1,66 +1,91 @@
-import 'package:easy_ops/route_managment/routes.dart';
 import 'package:get/get.dart';
-
-/* ───────────────────────── Controller ───────────────────────── */
+import 'package:easy_ops/route_managment/routes.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/models/spares_models.dart';
+// ⬇️ import the shared cart controller
+import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/controller/spare_cart_controller.dart';
 
 class StartWorkOrderController extends GetxController {
-  // Header / title
-  final title = 'Work Order Details'.obs;
-  final tabIndex = 0.obs; // 0: Work Order, 1: Assets, 2: Timeline
+  // Demo hero values
+  final subject = 'Hydraulic Leak in CNC-1'.obs;
+  final priority = 'High'.obs;
+  final elapsed = '00:23'.obs;
+  final woCode = 'WO-2025-00123'.obs;
+  final time = '10:15 AM'.obs;
+  final date = '13 Sep 2025'.obs;
+  final category = 'Breakdown'.obs;
 
-  // Top summary card
-  final subject = 'Conveyor Belt Stopped Abruptly During Operation'.obs;
-  final woCode = 'BD-102'.obs;
-  final time = '18:08'.obs;
-  final date = '09 Aug'.obs;
-  final category = 'Mechanical'.obs;
-  final status = 'In Progress'.obs; // blue chip
-  final priority = 'High'.obs; // red pill
-  final elapsed = '1h 20m'.obs;
-
-  // Operator Info (expand/collapse)
   final operatorOpen = true.obs;
-  final reportedBy = 'Ashwath Mohan Mahendran'.obs;
-  final reportedByPhone = '+91 90000 00001'.obs;
-  final maintenanceManager = 'Rajesh Kumar'.obs;
-  final maintenanceManagerPhone = '+91 90000 00002'.obs;
+  final reportedBy = 'Rakesh Sharma (Operator)'.obs;
+  final maintenanceManager = 'Anita Verma'.obs;
 
-  // Work Order Info (expand/collapse)
   final workInfoOpen = true.obs;
-
-  // Asset line + cost
-  final assetLine = 'CNC - 1 | ₹ 2000/hr'.obs;
-  final assetLocation = 'CNC Vertical Assets Center where we make housing'.obs;
-
-  // Description
+  final assetLine = 'CNC-1 · Line A'.obs;
+  final assetLocation = 'Bay 2 · Shop Floor'.obs;
   final description =
-      'Tool misalignment and spindle speed issues in Bay 3 causing uneven cuts and delays. Immediate attention needed.'
+      'Observed hydraulic oil droplets near the spindle. Requires inspection of hoses and seals.'
           .obs;
 
   // Media
-  final photoPaths = <String>[
-    // Fallback URLs (replace with assets later if you prefer)
+  final RxList<String> photoPaths = <String>[
     'https://fastly.picsum.photos/id/459/200/200.jpg?hmac=WxFjGfN8niULmp7dDQKtjraxfa4WFX-jcTtkMyH4I-Y',
     'https://fastly.picsum.photos/id/416/200/300.jpg?hmac=KIMUiPYQ0X2OQBuJIwtfL9ci1AGeu2OqrBH4GqpE7Bc',
   ].obs;
 
-  // You can switch to an asset later: assets/dummy/work_orders/voice_note1.m4a
   final voiceNotePath =
       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'.obs;
 
-  // Need spares?
-  final needSparesOpen = false.obs;
+  /// Items confirmed from the cart (after Place Order)
+  final RxList<CartLine> requestedSpares = <CartLine>[].obs;
 
   // Actions
-  void onBack() => Get.back();
-  void onOtherOptions() {}
-
-  // ignore: non_constant_identifier_names
-  void StartOrder() {
-    Get.toNamed(Routes.startWorkSubmitScreen);
-  }
-
   void toggleOperator() => operatorOpen.toggle();
   void toggleWorkInfo() => workInfoOpen.toggle();
-  void toggleSpares() => needSparesOpen.toggle();
+
+  void startOrder() => Get.toNamed(Routes.startWorkSubmitScreen);
+
+  /// Open the Request Spares screen and **pre-fill** it with the already
+  /// requested items so the user can edit/add more.
+  void needSpares() {
+    // Grab the SINGLE shared cart controller (register it once in GlobalBindings).
+    final cartCtrl = Get.find<SpareCartController>();
+
+    // Copy requested lines into the shared cart so RequestSparesPage sees them.
+    cartCtrl.cart
+      ..clear()
+      ..addAll(
+        requestedSpares.map(
+          (l) => CartLine(
+            key: l.key,
+            item: l.item,
+            qty: l.qty,
+            cat1: l.cat1,
+            cat2: l.cat2,
+          ),
+        ),
+      );
+
+    // Navigate to Request Spares — the page should already read cartCtrl.cart.
+    Get.toNamed(Routes.requestSparesScreen);
+  }
+
+  /// Merge-in lines from the cart (called by SpareCartController.placeOrder()).
+  void addSparesFromCart(List<CartLine> lines) {
+    for (final l in lines) {
+      final idx = requestedSpares.indexWhere((e) => e.key == l.key);
+      if (idx >= 0) {
+        requestedSpares[idx].qty += l.qty;
+      } else {
+        requestedSpares.add(
+          CartLine(
+            key: l.key,
+            item: l.item,
+            qty: l.qty,
+            cat1: l.cat1,
+            cat2: l.cat2,
+          ),
+        );
+      }
+    }
+    requestedSpares.refresh();
+  }
 }

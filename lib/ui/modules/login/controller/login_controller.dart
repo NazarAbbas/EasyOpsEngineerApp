@@ -41,9 +41,9 @@ class LoginPageController extends GetxController {
         password: password,
       );
 
-      final resq = await _apiService.historyWorkOrderActivityById(
-        "HWOA-123456",
-      );
+      // final resq = await _apiService.historyWorkOrderActivityById(
+      //   "HWOA-123456",
+      // );
       Get.toNamed(Routes.workOrderManagementScreen);
       Get.snackbar(
         'Success',

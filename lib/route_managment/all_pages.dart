@@ -23,8 +23,10 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_orde
 import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/ui/panding_activity_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/ui/rca_analysis_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/request_spares/ui/request_spares_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/ui/return_spare_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/ui/spare_cart_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/ui/start_work_order_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/ui/start_work_submit_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
@@ -304,6 +306,18 @@ class AllPages {
       GetPage(
         name: Routes.pendingActivityScreen,
         page: () => PendingActivityPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.requestSparesScreen,
+        page: () => RequestSparesPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.sparesCartScreen,
+        page: () => SparesCartPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),

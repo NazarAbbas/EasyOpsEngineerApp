@@ -21,7 +21,9 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_orde
 import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/controller/pending_activity_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/rca_analysis/controller/rca_analysis_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/reassign_work_order/controller/reassign_work_order_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/request_spares/controller/request_spares_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/return_spare_parts/controller/return_spare_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/controller/spare_cart_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/controller/start_work_submit_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/controller/work_order_details_tabs_controller.dart';
@@ -83,7 +85,7 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => ReturnSparePartsController());
     Get.lazyPut(() => ConsumedSparePartsController());
     Get.lazyPut(() => WorkOrdersManagementController());
-    Get.lazyPut(() => StartWorkOrderController());
+    // Get.lazyPut(() => StartWorkOrderController());
     Get.lazyPut(() => ReassignWorkOrderController());
     Get.lazyPut(() => StartWorkSubmitController());
     Get.lazyPut(() => HoldWorkOrderController());
@@ -94,5 +96,14 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => ReturnSparesController());
     Get.lazyPut(() => RcaAnalysisController());
     Get.lazyPut(() => PendingActivityController());
+    Get.lazyPut(() => SparesRequestController());
+    Get.put(SpareCartController(), permanent: true); // shared cart
+    // Keep ONE StartWorkOrderController for the active WO.
+    // (If you support multiple WO pages at once, use tags.)
+    if (!Get.isRegistered<StartWorkOrderController>()) {
+      Get.put(StartWorkOrderController(), permanent: true);
+    }
+
+    //Get.lazyPut(() => SpareCartController());
   }
 }
