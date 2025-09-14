@@ -2,8 +2,10 @@
 
 import 'package:easy_ops/constants/values/app_colors.dart';
 import 'package:easy_ops/route_managment/routes.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/controller/diagnostics_controller.dart'
+    hide WorkOrder;
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/models/work_order.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/models/work_order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

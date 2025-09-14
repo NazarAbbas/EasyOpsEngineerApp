@@ -1,11 +1,12 @@
+// lib/ui/modules/work_order_management/update_work_order/history/ui/history_page.dart
 import 'package:easy_ops/constants/values/app_colors.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/history/controller/update_history_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/history/models/update_history_items.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/history/controller/history_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/history/models/history_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HistoryPage extends GetView<UpdateHistoryController> {
+class HistoryPage extends GetView<HistoryController> {
   const HistoryPage({super.key});
 
   bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
@@ -14,6 +15,9 @@ class HistoryPage extends GetView<UpdateHistoryController> {
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
     final double hPad = isTablet ? 20 : 14;
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
@@ -40,12 +44,8 @@ class HistoryPage extends GetView<UpdateHistoryController> {
           itemCount: items.length + 2,
           separatorBuilder: (_, __) => const SizedBox(height: 14),
           itemBuilder: (context, index) {
-            if (index == 0) {
-              return const _Header();
-            }
-            if (index == 1) {
-              return const _StatsCard();
-            }
+            if (index == 0) return const _Header();
+            if (index == 1) return const _StatsCard();
             final item = items[index - 2];
             return _HistoryCard(item: item, isTablet: isTablet);
           },
@@ -60,13 +60,13 @@ class HistoryPage extends GetView<UpdateHistoryController> {
             width: double.infinity,
             child: FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF2F6BFF),
+                backgroundColor: primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: () => {controller.goBack(0)},
+              onPressed: () => controller.goBack(0),
               child: const Text(
                 'Go Back',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
@@ -97,7 +97,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// Stats row inside a soft card, with stable “|” pipes (no height issues).
 class _StatsCard extends StatelessWidget {
   const _StatsCard();
 
@@ -163,7 +162,7 @@ class _StatsCard extends StatelessWidget {
 }
 
 class _HistoryCard extends StatelessWidget {
-  final UpdateHistoryItem item;
+  final HistoryItem item;
   final bool isTablet;
   const _HistoryCard({required this.item, this.isTablet = false});
 
@@ -186,14 +185,13 @@ class _HistoryCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {}, // optional: go to details
+        onTap: () {}, // optional: navigate
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: const Color(0xFFE9EEF6)),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 3),

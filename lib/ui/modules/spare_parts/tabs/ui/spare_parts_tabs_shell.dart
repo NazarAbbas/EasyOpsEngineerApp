@@ -3,7 +3,6 @@ import 'package:easy_ops/constants/values/app_colors.dart';
 import 'package:easy_ops/ui/modules/spare_parts/consume_spare_parts/ui/consume_spare_parts_page.dart';
 import 'package:easy_ops/ui/modules/spare_parts/return_spare_parts/ui/return_spare_parts_page.dart';
 import 'package:easy_ops/ui/modules/spare_parts/tabs/controller/spare_parts_tabs_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/tabs/controller/work_tabs_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

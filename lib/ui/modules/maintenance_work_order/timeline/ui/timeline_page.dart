@@ -1,12 +1,12 @@
 // timeline_page.dart (fixed)
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/timeline/controller/update_timeline_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/timeline/models/timeline.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/controller/timeline_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/models/timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TimelinePage extends GetView<WorkOrderTimelineController> {
+class TimelinePage extends GetView<TimelineController> {
   const TimelinePage({super.key});
 
   // @override
@@ -19,7 +19,9 @@ class TimelinePage extends GetView<WorkOrderTimelineController> {
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
     final hPad = isTablet ? 18.0 : 14.0;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
 
@@ -46,7 +48,7 @@ class TimelinePage extends GetView<WorkOrderTimelineController> {
             width: double.infinity,
             child: FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: _C.primary,
+                backgroundColor: primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -68,7 +70,7 @@ class TimelinePage extends GetView<WorkOrderTimelineController> {
 /* ---------------- ISSUE HEADER ---------------- */
 
 class _IssueHeaderCard extends StatelessWidget {
-  final WorkOrderTimelineController controller;
+  final TimelineController controller;
   const _IssueHeaderCard({required this.controller});
 
   @override
@@ -262,7 +264,7 @@ const double _lineLeft = _tilePadL + (_gutterW / 2) - (_lineW / 2);
 /* ---------------- TIMELINE LIST (continuous line) ---------------- */
 
 class _TimelineList extends StatelessWidget {
-  final WorkOrderTimelineController controller;
+  final TimelineController controller;
   const _TimelineList({required this.controller});
 
   @override

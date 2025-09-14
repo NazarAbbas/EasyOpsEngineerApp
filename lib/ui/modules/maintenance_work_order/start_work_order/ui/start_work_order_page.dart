@@ -1,4 +1,6 @@
-// ✅ NOTE: no import of request_spares_controller.dart here
+// start_work_order_page.dart
+// NOTE: No import of request_spares_controller.dart here.
+
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/route_managment/routes.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/models/spares_models.dart';
@@ -29,71 +32,84 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
 
     final otherBtnKey = GlobalKey();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F7FB),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(headerH),
-        child: _GradientHeader(title: 'Work Order Details', isTablet: isTablet),
-      ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  key: otherBtnKey,
-                  icon: const Icon(CupertinoIcons.chevron_up, size: 16),
-                  label: const Text(
-                    'Other Options',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  onPressed: () =>
-                      _showOtherOptionsMenu(context, otherBtnKey, controller),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size.fromHeight(btnH),
-                    side: BorderSide(color: primary, width: 1.4),
-                    foregroundColor: primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton(
-                  onPressed: controller.startOrder,
-                  style: FilledButton.styleFrom(
-                    minimumSize: Size.fromHeight(btnH),
-                    backgroundColor: primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 1.5,
-                  ),
-                  child: const Text(
-                    'Start',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ),
-            ],
+    return WillPopScope(
+      onWillPop: () async {
+        await controller.stopAllAudio(); // stop audio on system back
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF6F7FB),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(headerH),
+          child: _GradientHeader(
+            title: 'Work Order Details',
+            isTablet: isTablet,
+            onBack: () async {
+              await controller.stopAllAudio(); // stop before back
+              Get.back();
+            },
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 16),
-        child: Column(
-          children: const [
-            _SummaryHeroCard(),
-            _OperatorInfoCard(),
-            _WorkOrderInfoCard(),
-            _MediaCard(),
-            _SparesCard(), // shows placed items here
-          ],
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    key: otherBtnKey,
+                    icon: const Icon(CupertinoIcons.chevron_up, size: 16),
+                    label: const Text(
+                      'Other Options',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    onPressed: () =>
+                        _showOtherOptionsMenu(context, otherBtnKey, controller),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size.fromHeight(btnH),
+                      side: BorderSide(color: primary, width: 1.4),
+                      foregroundColor: primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: controller.startOrder, // controller stops audio
+                    style: FilledButton.styleFrom(
+                      minimumSize: Size.fromHeight(btnH),
+                      backgroundColor: primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 1.5,
+                    ),
+                    child: const Text(
+                      'Start',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 16),
+          child: Column(
+            children: const [
+              _SummaryHeroCard(),
+              _OperatorInfoCard(),
+              _WorkOrderInfoCard(),
+              _MediaCard(),
+              _SparesCard(), // shows placed items here
+            ],
+          ),
         ),
       ),
     );
@@ -153,8 +169,10 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
     );
 
     if (selected == 'hold') {
+      await c.stopAllAudio();
       Get.toNamed(Routes.holdWorkOrderScreen);
     } else if (selected == 'cancel') {
+      await c.stopAllAudio();
       Get.toNamed(Routes.cancelWorkOrderFromDiagnosticsScreen);
     }
   }
@@ -164,7 +182,12 @@ class StartWorkOrderPage extends GetView<StartWorkOrderController> {
 class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool isTablet;
-  const _GradientHeader({required this.title, required this.isTablet});
+  final VoidCallback? onBack;
+  const _GradientHeader({
+    required this.title,
+    required this.isTablet,
+    this.onBack,
+  });
 
   @override
   Size get preferredSize => Size.fromHeight(isTablet ? 120 : 110);
@@ -190,20 +213,20 @@ class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
               width: btnSize,
               height: btnSize,
               child: IconButton(
-                onPressed: Get.back,
+                onPressed: onBack,
                 iconSize: iconSize,
                 splashRadius: btnSize / 2,
                 icon: const Icon(CupertinoIcons.back, color: Colors.white),
                 tooltip: 'Back',
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Work Order Details',
+                title,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
                   fontSize: 18,
@@ -218,75 +241,164 @@ class _GradientHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-/* ───────── Hero Card ───────── */
+/* ───────── Hero Card (beautiful, screenshot-like) ───────── */
 class _SummaryHeroCard extends StatelessWidget {
   const _SummaryHeroCard();
+
+  String _shortDate(String s) {
+    final p = s.trim().split(RegExp(r'\s+'));
+    return p.length >= 2 ? '${p[0]} ${p[1]}' : s;
+  }
 
   @override
   Widget build(BuildContext context) {
     final c = Get.find<StartWorkOrderController>();
-    final primary =
+    final blue =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
 
     return Obx(() {
-      return Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          gradient: LinearGradient(colors: [primary, primary]),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF2F6BFF).withOpacity(0.22),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              c.subject.value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 17.5,
-                height: 1.22,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 10,
-              runSpacing: 8,
-              children: [
-                _chip(c.woCode.value),
-                _chip(c.date.value),
-                _chip(c.time.value),
-                _chip(c.category.value),
+      final title = c.subject.value.isEmpty
+          ? 'Conveyor Belt Stopped Abruptly During Operation'
+          : c.subject.value;
+      final code = c.woCode.value.isEmpty ? 'BD-102' : c.woCode.value;
+      final time = c.time.value.isEmpty ? '18:08' : c.time.value;
+      final date = c.date.value.isEmpty ? '09 Aug' : _shortDate(c.date.value);
+      final prio = c.priority.value.isEmpty ? 'High' : c.priority.value;
+      final status = 'In Progress';
+      final cat = c.category.value.isEmpty ? 'Mechanical' : c.category.value;
+      final elapsed = c.elapsed.value.isEmpty ? '1h 20m' : c.elapsed.value;
+
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE9EEF5)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
-          ],
-        ),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title + red priority pill
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: _C.text,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                          height: 1.25,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    _Badge(text: prio, bg: const Color(0xFFED3B40)),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // Code + time | date  …  status
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        '$code   $time | $date',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: _C.muted,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      status,
+                      style: TextStyle(
+                        color: blue,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                // Bottom row: category + small blue tile … clock + elapsed
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              cat,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: _C.text,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF3FF),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.sync_alt_rounded,
+                              size: 14,
+                              color: blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Icon(CupertinoIcons.time, size: 16, color: _C.muted),
+                    const SizedBox(width: 6),
+                    Text(
+                      elapsed,
+                      style: const TextStyle(
+                        color: _C.muted,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Small notch decoration (optional, nice touch)
+          const Positioned(top: -8, left: 24, right: 24, child: _Notch()),
+        ],
       );
     });
   }
-
-  Widget _chip(String t) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.15),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Text(
-      t,
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
-    ),
-  );
 }
 
-/* ───────── Sections ───────── */
+/* ───────── Operator Info (with call buttons) ───────── */
 class _OperatorInfoCard extends StatelessWidget {
   const _OperatorInfoCard();
 
@@ -305,11 +417,16 @@ class _OperatorInfoCard extends StatelessWidget {
             ),
             if (c.operatorOpen.value) ...[
               const SizedBox(height: 10),
-              _InfoRow(label: 'Reported By', value: c.reportedBy.value),
+              _CallRow(
+                label: 'Reported By',
+                value: c.reportedBy.value,
+                phone: c.reportedByPhone.value,
+              ),
               const SizedBox(height: 8),
-              _InfoRow(
+              _CallRow(
                 label: 'Maintenance Manager',
                 value: c.maintenanceManager.value,
+                phone: c.maintenanceManagerPhone.value,
               ),
             ],
           ],
@@ -319,6 +436,89 @@ class _OperatorInfoCard extends StatelessWidget {
   }
 }
 
+class _CallRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final String phone;
+  const _CallRow({
+    required this.label,
+    required this.value,
+    required this.phone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const labelStyle = TextStyle(color: _C.muted, fontWeight: FontWeight.w700);
+    const valueStyle = TextStyle(color: _C.text, fontWeight: FontWeight.w800);
+
+    final canCall = phone.trim().isNotEmpty;
+
+    return Row(
+      children: [
+        SizedBox(width: 140, child: Text(label, style: labelStyle)),
+        Expanded(
+          child: Text(
+            value.isEmpty ? '—' : value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: valueStyle,
+          ),
+        ),
+        const SizedBox(width: 8),
+        _CallBtn(
+          enabled: canCall,
+          onTap: () async {
+            if (!canCall) return;
+            final uri = Uri(scheme: 'tel', path: phone.trim());
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            } else {
+              Get.snackbar(
+                'Unable to place call',
+                'Phone dialer not available',
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            }
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _CallBtn extends StatelessWidget {
+  final bool enabled;
+  final VoidCallback onTap;
+  const _CallBtn({required this.enabled, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkResponse(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: enabled ? const Color(0xFFEFF3FF) : const Color(0xFFF2F4F7),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: enabled
+                ? _C.primary.withOpacity(0.18)
+                : _C.muted.withOpacity(0.18),
+          ),
+        ),
+        child: Icon(
+          CupertinoIcons.phone,
+          size: 18,
+          color: enabled ? _C.primary : _C.muted,
+        ),
+      ),
+    );
+  }
+}
+
+/* ───────── Work Order Info (with history icon) ───────── */
 class _WorkOrderInfoCard extends StatelessWidget {
   const _WorkOrderInfoCard();
 
@@ -338,12 +538,22 @@ class _WorkOrderInfoCard extends StatelessWidget {
             ),
             if (c.workInfoOpen.value) ...[
               const SizedBox(height: 10),
-              Text(
-                c.assetLine.value,
-                style: const TextStyle(
-                  color: _C.text,
-                  fontWeight: FontWeight.w800,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      c.assetLine.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _C.text,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _HistoryBtn(onTap: c.openAssetHistory),
+                ],
               ),
               const SizedBox(height: 6),
               Text(
@@ -362,6 +572,29 @@ class _WorkOrderInfoCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _HistoryBtn extends StatelessWidget {
+  final VoidCallback onTap;
+  const _HistoryBtn({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkResponse(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: const Color(0xFFEFF3FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: _C.line),
+        ),
+        child: const Icon(CupertinoIcons.time, size: 18, color: _C.primary),
       ),
     );
   }
@@ -434,7 +667,7 @@ class _SparesCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InkWell(
-              onTap: c.needSpares,
+              onTap: c.needSpares, // controller will stop audio before nav
               borderRadius: BorderRadius.circular(12),
               child: Row(
                 children: const [
@@ -573,22 +806,20 @@ class _CardHeader extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _InfoRow({required this.label, required this.value});
-
+class _IconChip extends StatelessWidget {
+  final IconData icon;
+  final Color bg;
+  final Color fg;
+  const _IconChip({required this.icon, required this.bg, required this.fg});
   @override
-  Widget build(BuildContext context) {
-    const labelStyle = TextStyle(color: _C.muted, fontWeight: FontWeight.w700);
-    const valueStyle = TextStyle(color: _C.text, fontWeight: FontWeight.w800);
-    return Row(
-      children: [
-        SizedBox(width: 140, child: Text(label, style: labelStyle)),
-        Expanded(child: Text(value, style: valueStyle)),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    child: Icon(icon, size: 16, color: fg),
+  );
 }
 
 class _Card extends StatelessWidget {
@@ -619,22 +850,6 @@ class _Card extends StatelessWidget {
       child: Padding(padding: padding, child: child),
     );
   }
-}
-
-class _IconChip extends StatelessWidget {
-  final IconData icon;
-  final Color bg;
-  final Color fg;
-  const _IconChip({required this.icon, required this.bg, required this.fg});
-  @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: bg,
-      borderRadius: BorderRadius.circular(10),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-    child: Icon(icon, size: 16, color: fg),
-  );
 }
 
 /* ====== Media helpers (images + audio) ====== */
@@ -682,8 +897,10 @@ class _Thumb extends StatelessWidget {
       return FutureBuilder<bool>(
         future: _assetExists(path),
         builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done || snap.data != true)
+          if (snap.connectionState != ConnectionState.done ||
+              snap.data != true) {
             return base;
+          }
           return ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.asset(path, width: 88, height: 64, fit: BoxFit.cover),
@@ -715,6 +932,8 @@ class _Thumb extends StatelessWidget {
   }
 }
 
+/* ───────── Audio bubble ───────── */
+
 class _AudioBubble extends StatefulWidget {
   final String path; // asset / file / url
   final double? width;
@@ -745,6 +964,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
   void initState() {
     super.initState();
     _player = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+
+    // Register with controller so it can stop us on navigation
+    Get.find<StartWorkOrderController>().registerPlayer(_player);
+
     _player.onDurationChanged.listen((d) {
       if (mounted) setState(() => _duration = d);
     });
@@ -754,11 +977,12 @@ class _AudioBubbleState extends State<_AudioBubble> {
       setState(() => _position = p);
     });
     _player.onPlayerComplete.listen((_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isPlaying = false;
           _position = _duration;
         });
+      }
     });
     _preload();
   }
@@ -797,6 +1021,10 @@ class _AudioBubbleState extends State<_AudioBubble> {
 
   @override
   void dispose() {
+    try {
+      _player.stop();
+    } catch (_) {}
+    Get.find<StartWorkOrderController>().unregisterPlayer(_player);
     _player.dispose();
     super.dispose();
   }
@@ -928,6 +1156,56 @@ class _AudioBubbleState extends State<_AudioBubble> {
                 activeColor: _C.primary,
                 inactiveColor: const Color(0xFFD7E2FF),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/* ───────── tiny helpers ───────── */
+class _Badge extends StatelessWidget {
+  final String text;
+  final Color bg;
+  const _Badge({required this.text, required this.bg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _Notch extends StatelessWidget {
+  const _Notch();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 120,
+        height: 10,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE3E8F2),
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),

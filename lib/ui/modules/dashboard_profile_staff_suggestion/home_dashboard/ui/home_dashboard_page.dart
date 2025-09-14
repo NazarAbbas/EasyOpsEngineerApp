@@ -1,6 +1,6 @@
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/home_dashboard/controller/home_dashboard_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/ui/work_order_list/work_orders_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

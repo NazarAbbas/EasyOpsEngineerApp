@@ -1,11 +1,9 @@
 // The screen with header tabs + body that swaps content
 import 'package:easy_ops/constants/values/app_colors.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/WorkTabsController.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/accept_work_order/ui/accept_work_order_page.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/history/ui/update_history_page.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/tabs/controller/update_work_tabs_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/timeline/ui/update_timeline_page.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/work_order/ui/update_work_order_details_page.dart';
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/models/work_order.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/history/ui/history_page.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/ui/timeline_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +15,7 @@ class WorkOrderDetailsTabsShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.put(UpdateWorkTabsController());
+    final ctrl = Get.put(WorkTabsController());
     final isTablet = _isTablet(context);
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
@@ -78,8 +76,8 @@ class WorkOrderDetailsTabsShell extends StatelessWidget {
           index: ctrl.selectedTab.value, // 0 shows WorkOrderInfoPage first
           children: [
             const AcceptWorkOrderPage(),
-            const UpdateHistoryPage(),
-            const UpdateTimeLinePage(),
+            const HistoryPage(),
+            const TimelinePage(),
           ],
         ),
       ),
@@ -87,7 +85,7 @@ class WorkOrderDetailsTabsShell extends StatelessWidget {
   }
 }
 
-class _HeaderTabs extends GetView<UpdateWorkTabsController> {
+class _HeaderTabs extends GetView<WorkTabsController> {
   const _HeaderTabs();
 
   @override

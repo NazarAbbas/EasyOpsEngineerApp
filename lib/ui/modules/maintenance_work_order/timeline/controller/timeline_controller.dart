@@ -1,7 +1,7 @@
 // timeline_page.dart
 // flutter pub add get
+import 'package:easy_ops/ui/modules/maintenance_work_order/WorkTabsController.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/models/timeline.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/tabs/controller/update_work_tabs_controller.dart';
 import 'package:get/get.dart';
 
 /* ======================= CONTROLLER ======================= */
@@ -74,5 +74,5 @@ class TimelineController extends GetxController {
 
   //void goBack() => Get.back();
 
-  void goBack(int i) => Get.find<UpdateWorkTabsController>().goTo(i);
+  void goBack(int i) => Get.find<WorkTabsController>().goTo(i);
 }

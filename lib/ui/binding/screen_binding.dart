@@ -12,10 +12,12 @@ import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/profile/c
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/suggestions_details/controller/suggestions_details_controller.dart';
 import 'package:easy_ops/ui/modules/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/WorkTabsController.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/cancel_work_order/controller/cancel_work_order_controller_from_diagnostics.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/closure/controller/closure_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/diagnostics/controller/diagnostics_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/history/controller/history_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/hold_work_order/controller/hold_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/controller/work_order_management_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/pending_activity/controller/pending_activity_controller.dart';
@@ -27,20 +29,10 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/spare_cart/controller
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/controller/start_work_order_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/controller/start_work_submit_controller.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/controller/work_order_details_tabs_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/controller/timeline_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/consume_spare_parts/controller/consume_spare_parts_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/return_spare_parts/controller/return_spare_parts_controller.dart';
 import 'package:easy_ops/ui/modules/spare_parts/tabs/controller/spare_parts_tabs_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/mc_history/controller/mc_history_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/operator_info/controller/operator_info_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/work_order_info/controller/work_order_info_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/tabs/controller/work_tabs_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/closure_work_order/controller/closure_work_order_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/history/controller/update_history_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/re_open_work_order/controller/re_open_work_order_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/tabs/controller/update_work_tabs_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/timeline/controller/update_timeline_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/work_order/controller/update_work_order_controller.dart';
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/controller/work_order_list_controller.dart';
 import 'package:easy_ops/ui/modules/forgot_password/controller/forgot_password_controller.dart';
 import 'package:easy_ops/ui/modules/login/controller/login_controller.dart';
 import 'package:easy_ops/ui/modules/splash/controller/splash_controller.dart';
@@ -53,21 +45,22 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => SplashPageController());
     Get.lazyPut(() => LoginPageController());
     Get.lazyPut(() => ForgotPasswordController());
-    Get.lazyPut(() => WorkOrdersController());
+
+    /// Get.lazyPut(() => WorkOrdersController());
     Get.lazyPut(() => UpdatePasswordController());
-    Get.lazyPut(() => WorkOrdersController());
-    Get.lazyPut(() => WorkorderInfoController());
-    Get.lazyPut(() => WorkTabsController());
+    // Get.lazyPut(() => WorkOrdersController());
+    //Get.lazyPut(() => WorkorderInfoController());
+    // Get.lazyPut(() => WorkTabsController());
     Get.lazyPut(() => SparePartsController());
-    Get.lazyPut(() => OperatorInfoController());
-    Get.lazyPut(() => UpdateWorkOrderDetailsController());
-    Get.lazyPut(() => UpdateWorkTabsController());
+    // Get.lazyPut(() => OperatorInfoController());
+    //Get.lazyPut(() => UpdateWorkOrderDetailsController());
+    Get.lazyPut(() => WorkTabsController());
     Get.lazyPut(() => WorkOrderDetailsTabsController());
-    Get.lazyPut(() => ReopenWorkOrderController());
-    Get.lazyPut(() => ClosureWorkOrderController());
-    Get.lazyPut(() => WorkOrderTimelineController());
-    Get.lazyPut(() => UpdateHistoryController());
-    Get.lazyPut(() => McHistoryController());
+    // Get.lazyPut(() => ReopenWorkOrderController());
+    //Get.lazyPut(() => ClosureWorkOrderController());
+    // Get.lazyPut(() => WorkOrderTimelineController());
+    //  Get.lazyPut(() => UpdateHistoryController());
+    // Get.lazyPut(() => McHistoryController());
     Get.lazyPut(() => AssetsManagementDashboardController());
     Get.lazyPut(() => AssetsDetailController());
     Get.lazyPut(() => AssetSpecificationController());
@@ -97,6 +90,8 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => RcaAnalysisController());
     Get.lazyPut(() => PendingActivityController());
     Get.lazyPut(() => SparesRequestController());
+    Get.lazyPut(() => HistoryController());
+    Get.lazyPut(() => TimelineController());
     Get.put(SpareCartController(), permanent: true); // shared cart
     // Keep ONE StartWorkOrderController for the active WO.
     // (If you support multiple WO pages at once, use tags.)

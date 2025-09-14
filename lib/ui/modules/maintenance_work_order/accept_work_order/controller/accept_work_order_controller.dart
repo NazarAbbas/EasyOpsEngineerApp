@@ -1,5 +1,6 @@
 // work_order_details_controller.dart
 // ignore: file_names
+import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_ops/route_managment/routes.dart';
 import 'package:get/get.dart';
 
@@ -73,12 +74,44 @@ class AcceptWorkOrderController extends GetxController {
     return '$dd $mon';
   }
 
-  // Actions
-  void acceptWorkOrder() {
+  // // Actions
+  // void acceptWorkOrder() {
+
+  //   Get.toNamed(Routes.startWorkOrderScreen);
+  // }
+
+  // void reAssignWorkOrder() {
+  //   Get.toNamed(Routes.reassignWorkOrderScreen);
+  // }
+
+  final Set<AudioPlayer> _players = {};
+  // Called by audio bubbles
+  void registerPlayer(AudioPlayer p) => _players.add(p);
+  void unregisterPlayer(AudioPlayer p) => _players.remove(p);
+
+  Future<void> stopAllAudio() async {
+    for (final p in _players.toList()) {
+      try {
+        await p.stop();
+      } catch (_) {}
+    }
+  }
+
+  @override
+  void onClose() {
+    // ensure nothing leaks if page is destroyed
+    stopAllAudio();
+    super.onClose();
+  }
+
+  // Your navigation actions:
+  Future<void> acceptWorkOrder() async {
+    await stopAllAudio();
     Get.toNamed(Routes.startWorkOrderScreen);
   }
 
-  void reAssignWorkOrder() {
+  Future<void> reAssignWorkOrder() async {
+    await stopAllAudio();
     Get.toNamed(Routes.reassignWorkOrderScreen);
   }
 }

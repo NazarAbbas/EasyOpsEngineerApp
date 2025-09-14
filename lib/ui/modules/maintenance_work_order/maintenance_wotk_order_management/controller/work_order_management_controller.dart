@@ -1,4 +1,4 @@
-import 'package:easy_ops/ui/modules/work_order_management/work_order_management_dashboard/models/work_order.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/maintenance_wotk_order_management/models/work_order.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

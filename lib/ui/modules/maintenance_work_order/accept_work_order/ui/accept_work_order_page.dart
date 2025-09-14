@@ -596,6 +596,9 @@ class _AudioBubbleState extends State<_AudioBubble> {
     super.initState();
     _player = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
 
+    // register with controller so it can stop us on navigation
+    Get.find<AcceptWorkOrderController>().registerPlayer(_player);
+
     _player.onDurationChanged.listen((d) {
       if (!mounted) return;
       setState(() => _duration = d);
@@ -616,6 +619,16 @@ class _AudioBubbleState extends State<_AudioBubble> {
     _preload();
   }
 
+  @override
+  void dispose() {
+    // best-effort stop; don't await in dispose
+    _player.stop();
+    // unregister from controller
+    Get.find<AcceptWorkOrderController>().unregisterPlayer(_player);
+    _player.dispose();
+    super.dispose();
+  }
+
   Future<void> _preload() async {
     final src = _buildSource(widget.path);
     if (src == null) return;
@@ -629,11 +642,11 @@ class _AudioBubbleState extends State<_AudioBubble> {
     }
   }
 
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _player.dispose();
+  //   super.dispose();
+  // }
 
   String _fmt(Duration d) {
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');

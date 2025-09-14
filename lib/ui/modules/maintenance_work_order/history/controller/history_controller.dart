@@ -1,6 +1,6 @@
 // controller: lib/.../mc_history/controller/mc_history_controller.dart
-import 'package:easy_ops/ui/modules/work_order_management/create_work_order/mc_history/models/history_items.dart';
-import 'package:easy_ops/ui/modules/work_order_management/update_work_order/tabs/controller/update_work_tabs_controller.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/WorkTabsController.dart';
+import 'package:easy_ops/ui/modules/maintenance_work_order/history/models/history_items.dart';
 import 'package:get/get.dart';
 
 class HistoryController extends GetxController {
@@ -13,6 +13,6 @@ class HistoryController extends GetxController {
     super.onInit();
   }
 
-  void goBack(int i) => Get.find<UpdateWorkTabsController>().goTo(i);
+  void goBack(int i) => Get.find<WorkTabsController>().goTo(i);
   //void goBack() => Get.back();
 }

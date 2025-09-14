@@ -46,4 +46,6 @@ class Routes {
   static String pendingActivityScreen = '/PENDING_ACTIVITY_SCREEN';
   static String requestSparesScreen = '/REQUEST_SPARES_SCREEN';
   static String sparesCartScreen = '/SPARES_CART_SCREEN';
+  static String historytScreen = '/HISTORY__SCREEN';
+  static String timeLineScreen = '/TIMELINE__SCREEN';
 }
