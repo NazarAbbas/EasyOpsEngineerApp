@@ -31,6 +31,9 @@ import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_order/ui/s
 import 'package:easy_ops/ui/modules/maintenance_work_order/start_work_submit/ui/start_work_submit_page.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
 import 'package:easy_ops/ui/modules/maintenance_work_order/timeline/ui/timeline_page.dart';
+import 'package:easy_ops/ui/modules/preventive_maintenance/preventive_maintenance_dashboard/controller/preventive_maintenance_dashboard_controller.dart';
+import 'package:easy_ops/ui/modules/preventive_maintenance/preventive_maintenance_dashboard/ui/preventive_maintenance_dashboard_page.dart';
+import 'package:easy_ops/ui/modules/preventive_maintenance/wotk_order/ui/work_order_page.dart';
 import 'package:easy_ops/ui/modules/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
 import 'package:easy_ops/ui/modules/forgot_password/ui/forgot_password_page.dart';
 import 'package:easy_ops/ui/modules/update_password/ui/update_password_page.dart';
@@ -320,6 +323,18 @@ class AllPages {
       GetPage(
         name: Routes.timeLineScreen,
         page: () => TimelinePage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.preventiveMaintenanceDashboardScreen,
+        page: () => PreventiveMaintenanceDashboardPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.preventiveWorkOrderScreen,
+        page: () => WorkOrderPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),

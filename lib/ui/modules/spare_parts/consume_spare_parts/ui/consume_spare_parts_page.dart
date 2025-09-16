@@ -24,6 +24,9 @@ class _ConsumedTab extends GetView<ConsumedSparePartsController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Obx(() {
       final list = controller.consumedTickets;
       return ListView.separated(
@@ -286,7 +289,7 @@ class _ConsumedTab extends GetView<ConsumedSparePartsController> {
                                   height: 42,
                                   child: FilledButton(
                                     style: FilledButton.styleFrom(
-                                      backgroundColor: const Color(0xFF2F6BFF),
+                                      backgroundColor: primary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),

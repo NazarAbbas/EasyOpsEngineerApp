@@ -7,6 +7,10 @@ class ReturnSparePartsPage extends GetView<ReturnSparePartsController> {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
+
     return Obx(
       () => Scaffold(
         backgroundColor: const Color(0xFFF6F7FB),
@@ -22,7 +26,7 @@ class ReturnSparePartsPage extends GetView<ReturnSparePartsController> {
               width: double.infinity,
               child: FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F6BFF),
+                  backgroundColor: primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -130,7 +134,8 @@ class _ReturnsTab extends GetView<ReturnSparePartsController> {
               expanded: controller.isExpanded(t.id),
               onToggle: () => controller.toggleExpand(t.id),
               onReturn: () => controller.returnTicket(t.id),
-              onEditLine: (idx) => controller.editQty(t.id, idx),
+              onEditLine: (idx, newQty) =>
+                  controller.editQty(t.id, idx, newQty),
               onDeleteLine: (idx) => controller.deleteLine(t.id, idx),
             ),
           );
@@ -142,14 +147,15 @@ class _ReturnsTab extends GetView<ReturnSparePartsController> {
   }
 }
 
-class _TicketCard extends StatelessWidget {
+/// ---------------- Ticket Card ----------------
+class _TicketCard extends StatefulWidget {
   final String meta;
   final String subtitle;
   final SpareTicket ticket;
   final bool expanded;
   final VoidCallback onToggle;
   final VoidCallback onReturn;
-  final void Function(int index) onEditLine;
+  final void Function(int index, int newQty) onEditLine;
   final void Function(int index) onDeleteLine;
 
   const _TicketCard({
@@ -163,6 +169,34 @@ class _TicketCard extends StatelessWidget {
     required this.onDeleteLine,
   });
 
+  @override
+  State<_TicketCard> createState() => _TicketCardState();
+}
+
+class _TicketCardState extends State<_TicketCard> {
+  int? _editingIndex;
+  int _tempQty = 0;
+
+  void _startEdit(int i, int currentQty) {
+    setState(() {
+      _editingIndex = i;
+      _tempQty = currentQty;
+    });
+  }
+
+  void _cancelEdit() {
+    setState(() {
+      _editingIndex = null;
+    });
+  }
+
+  void _applyEdit(int i) {
+    widget.onEditLine(i, _tempQty);
+    setState(() {
+      _editingIndex = null;
+    });
+  }
+
   Color _priorityColor(Priority p) => switch (p) {
     Priority.high => const Color(0xFFE55A52),
     Priority.medium => const Color(0xFFE7A23C),
@@ -171,6 +205,12 @@ class _TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
+
+    final t = widget.ticket;
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF4F6FB),
@@ -181,13 +221,13 @@ class _TicketCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          onTap: onToggle,
+          onTap: widget.onToggle,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top meta + chevron
+                // Meta row
                 Row(
                   children: [
                     Expanded(
@@ -195,7 +235,7 @@ class _TicketCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            meta,
+                            widget.meta,
                             style: const TextStyle(
                               fontWeight: FontWeight.w800,
                               color: Color(0xFF2D2F39),
@@ -203,7 +243,7 @@ class _TicketCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            subtitle,
+                            widget.subtitle,
                             style: const TextStyle(
                               fontSize: 12,
                               color: Color(0xFF7A8494),
@@ -215,7 +255,7 @@ class _TicketCard extends StatelessWidget {
                     ),
                     AnimatedRotation(
                       duration: const Duration(milliseconds: 200),
-                      turns: expanded ? 0.5 : 0.0,
+                      turns: widget.expanded ? 0.5 : 0.0,
                       child: const Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: Color(0xFF2F6BFF),
@@ -224,10 +264,10 @@ class _TicketCard extends StatelessWidget {
                   ],
                 ),
 
-                // Expanded section
+                // Expandable
                 AnimatedCrossFade(
                   duration: const Duration(milliseconds: 200),
-                  crossFadeState: expanded
+                  crossFadeState: widget.expanded
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
                   firstChild: const SizedBox.shrink(),
@@ -235,104 +275,17 @@ class _TicketCard extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 12),
                     child: Column(
                       children: [
-                        // Issue title + priority + aging/resolved
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    ticket.issueTitle,
-                                    style: const TextStyle(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF2D2F39),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        ticket.department,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF2D2F39),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Icon(
-                                        Icons.warning_amber_rounded,
-                                        size: 16,
-                                        color: Color(0xFFE55A52),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        ticket.machine,
-                                        style: const TextStyle(
-                                          fontSize: 12.5,
-                                          color: Color(0xFF7A8494),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                _Pill(
-                                  text: 'High',
-                                  color: _priorityColor(ticket.priority),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.access_time_rounded,
-                                      size: 14,
-                                      color: Color(0xFF7A8494),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      ticket.agingText,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF7A8494),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  ticket.resolved ? 'Resolved' : 'In Progress',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: ticket.resolved
-                                        ? const Color(0xFF3AB97A)
-                                        : const Color(0xFFE7A23C),
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
                         _CenterDivider(title: 'Spares to be Returned'),
                         const SizedBox(height: 8),
 
-                        // lines
-                        ...List.generate(ticket.lines.length, (i) {
-                          final line = ticket.lines[i];
+                        // Lines with inline editing
+                        ...List.generate(t.lines.length, (i) {
+                          final line = t.lines[i];
+                          final isEditing = _editingIndex == i;
+
                           return Padding(
                             padding: EdgeInsets.only(
-                              bottom: i == ticket.lines.length - 1 ? 0 : 10,
+                              bottom: i == t.lines.length - 1 ? 0 : 10,
                             ),
                             child: Row(
                               children: [
@@ -345,32 +298,63 @@ class _TicketCard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  '${line.qty} nos',
-                                  style: const TextStyle(
-                                    color: Color(0xFF2D2F39),
-                                    fontWeight: FontWeight.w700,
+                                if (!isEditing) ...[
+                                  Text(
+                                    '${line.qty} nos',
+                                    style: const TextStyle(
+                                      color: Color(0xFF2D2F39),
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    size: 18,
-                                    color: Color(0xFF2F6BFF),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      size: 18,
+                                      color: Color(0xFF2F6BFF),
+                                    ),
+                                    onPressed: () => _startEdit(i, line.qty),
+                                    tooltip: 'Edit quantity',
                                   ),
-                                  onPressed: () => onEditLine(i),
-                                  tooltip: 'Edit quantity',
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete_outline,
-                                    size: 18,
-                                    color: Color(0xFF2F6BFF),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      size: 18,
+                                      color: Color(0xFF2F6BFF),
+                                    ),
+                                    onPressed: () => widget.onDeleteLine(i),
+                                    tooltip: 'Remove',
                                   ),
-                                  onPressed: () => onDeleteLine(i),
-                                  tooltip: 'Remove',
-                                ),
+                                ] else ...[
+                                  _QtyStepper(
+                                    qty: _tempQty,
+                                    onMinus: () => setState(() {
+                                      if (_tempQty > 1) _tempQty--;
+                                    }),
+                                    onPlus: () => setState(() {
+                                      _tempQty++;
+                                    }),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 22,
+                                      color: Color(0xFF3AB97A),
+                                    ),
+                                    tooltip: 'Save',
+                                    onPressed: () => _applyEdit(i),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.cancel_rounded,
+                                      size: 22,
+                                      color: Color(0xFFE55A52),
+                                    ),
+                                    tooltip: 'Cancel',
+                                    onPressed: _cancelEdit,
+                                  ),
+                                ],
                               ],
                             ),
                           );
@@ -382,12 +366,12 @@ class _TicketCard extends StatelessWidget {
                           height: 42,
                           child: FilledButton(
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF2F6BFF),
+                              backgroundColor: primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: onReturn,
+                            onPressed: widget.onReturn,
                             child: const Text(
                               'Return',
                               style: TextStyle(
@@ -410,49 +394,55 @@ class _TicketCard extends StatelessWidget {
   }
 }
 
-class _Pill extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _Pill({required this.text, required this.color});
+/// ---------------- Qty Stepper ----------------
+class _QtyStepper extends StatelessWidget {
+  final int qty;
+  final VoidCallback onMinus;
+  final VoidCallback onPlus;
+
+  const _QtyStepper({
+    required this.qty,
+    required this.onMinus,
+    required this.onPlus,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: ShapeDecoration(color: color, shape: const StadiumBorder()),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11.5,
-          fontWeight: FontWeight.w800,
-        ),
+      height: 34,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE1E6EF)),
       ),
-    );
-  }
-}
-
-class _CenterDivider extends StatelessWidget {
-  final String title;
-  const _CenterDivider({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider(color: Color(0xFFE1E6EF), thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            title,
-            style: const TextStyle(
-              color: Color(0xFF7C8698),
-              fontWeight: FontWeight.w800,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 34),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.remove, size: 18),
+            onPressed: onMinus,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              '$qty',
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                color: Color(0xFF2D2F39),
+              ),
             ),
           ),
-        ),
-        const Expanded(child: Divider(color: Color(0xFFE1E6EF), thickness: 1)),
-      ],
+          IconButton(
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 34),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.add, size: 18),
+            onPressed: onPlus,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -501,6 +491,32 @@ class _ConsumedTab extends GetView<ReturnSparePartsController> {
         itemCount: list.length,
       );
     });
+  }
+}
+
+/// ---------------- Divider ----------------
+class _CenterDivider extends StatelessWidget {
+  final String title;
+  const _CenterDivider({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: Color(0xFFE1E6EF), thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF7C8698),
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider(color: Color(0xFFE1E6EF), thickness: 1)),
+      ],
+    );
   }
 }
 

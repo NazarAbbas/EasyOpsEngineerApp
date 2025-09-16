@@ -54,14 +54,14 @@ class ReturnSparePartsController extends GetxController {
       priority: Priority.high,
       lines: [
         SpareLine(partNo: 'J122338812', qty: 1),
-        SpareLine(partNo: 'J122338812', qty: 1),
-        SpareLine(partNo: 'J122338812', qty: 1),
-        SpareLine(partNo: 'J122338812', qty: 2),
+        SpareLine(partNo: 'J122338813', qty: 1),
+        SpareLine(partNo: 'J122338814', qty: 1),
+        SpareLine(partNo: 'J122338815', qty: 2),
       ],
     ),
     SpareTicket(
       id: 't2',
-      bdNo: 'BD - 102',
+      bdNo: 'BD - 103',
       createdAt: DateTime(DateTime.now().year, 8, 9, 18, 8),
       machine: 'CNC -1',
       issueTitle: 'Hydraulic pressure unstable',
@@ -76,7 +76,7 @@ class ReturnSparePartsController extends GetxController {
     ),
     SpareTicket(
       id: 't3',
-      bdNo: 'BD - 102',
+      bdNo: 'BD - 104',
       createdAt: DateTime(DateTime.now().year, 8, 9, 18, 8),
       machine: 'CNC -1',
       issueTitle: 'Coolant pump noise',
@@ -103,26 +103,27 @@ class ReturnSparePartsController extends GetxController {
     expanded.refresh();
   }
 
-  // actions
-  void editQty(String ticketId, int lineIndex) {
+  // -------- Actions --------
+  void editQty(String ticketId, int lineIndex, int newQty) {
     final t = returns.firstWhereOrNull((e) => e.id == ticketId);
     if (t == null) return;
-    final current = t.lines[lineIndex].qty;
-    final newQty = (current + 1).clamp(1, 999); // demo: +1
-    t.lines[lineIndex].qty = newQty;
+    if (lineIndex < 0 || lineIndex >= t.lines.length) return;
+
+    t.lines[lineIndex].qty = newQty.clamp(1, 999);
     returns.refresh();
   }
 
   void deleteLine(String ticketId, int lineIndex) {
     final t = returns.firstWhereOrNull((e) => e.id == ticketId);
     if (t == null) return;
-    if (t.lines.isEmpty) return;
+    if (lineIndex < 0 || lineIndex >= t.lines.length) return;
+
     t.lines.removeAt(lineIndex);
     returns.refresh();
   }
 
   void returnTicket(String ticketId) {
-    // TODO: API call
+    // TODO: integrate API call
     Get.snackbar(
       'Returned',
       'Ticket $ticketId returned',
@@ -131,7 +132,7 @@ class ReturnSparePartsController extends GetxController {
   }
 
   void returnAll() {
-    // TODO: API call
+    // TODO: integrate API call
     Get.snackbar(
       'Return All',
       'All listed spares returned',

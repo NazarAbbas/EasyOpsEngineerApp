@@ -48,4 +48,7 @@ class Routes {
   static String sparesCartScreen = '/SPARES_CART_SCREEN';
   static String historytScreen = '/HISTORY__SCREEN';
   static String timeLineScreen = '/TIMELINE__SCREEN';
+  static String preventiveMaintenanceDashboardScreen =
+      '/PREVENTIVE_MAINTENANCE_DASHBOARD_SCREEN';
+  static String preventiveWorkOrderScreen = '/PREVENTIVE_WORK__SCREEN';
 }

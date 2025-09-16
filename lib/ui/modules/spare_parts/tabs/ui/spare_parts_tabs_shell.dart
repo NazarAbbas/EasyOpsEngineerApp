@@ -7,18 +7,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SparePartsTabsShell extends StatelessWidget {
+class SparePartsTabsShell extends GetView<SparePartsController> {
   const SparePartsTabsShell({super.key});
 
   bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.put(SparePartsController());
     final isTablet = _isTablet(context);
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: PreferredSize(
@@ -59,7 +59,7 @@ class SparePartsTabsShell extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48), // balance IconButton width
+                    const SizedBox(width: 48), // balance for IconButton
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -71,10 +71,10 @@ class SparePartsTabsShell extends StatelessWidget {
       ),
       body: Obx(
         () => IndexedStack(
-          index: ctrl.selectedTab.value, // 0 shows WorkOrderInfoPage first
-          children: [
-            const ReturnSparePartsPage(),
-            const ConsumedSparePartsPage(),
+          index: controller.selectedTab.value,
+          children: const [
+            ReturnSparePartsPage(),
+            ConsumedSparePartsPage(), // <- ensure class name matches import
           ],
         ),
       ),
@@ -90,6 +90,7 @@ class _HeaderTabs extends GetView<SparePartsController> {
     return LayoutBuilder(
       builder: (context, c) {
         final segW = c.maxWidth / controller.tabs.length;
+
         return Stack(
           alignment: Alignment.bottomLeft,
           children: [
@@ -127,13 +128,13 @@ class _HeaderTabs extends GetView<SparePartsController> {
             ),
             // underline
             Obx(() {
-              final left = 8 + controller.selectedTab.value * segW;
+              final left = controller.selectedTab.value * segW;
               return AnimatedPositioned(
                 duration: const Duration(milliseconds: 180),
                 curve: Curves.easeOut,
-                left: left,
+                left: left + (segW * 0.15), // center it a bit
                 bottom: 0,
-                width: segW - 16,
+                width: segW * 0.7, // 70% of tab width
                 height: 3,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
