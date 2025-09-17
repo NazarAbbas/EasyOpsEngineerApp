@@ -918,13 +918,13 @@ class BottomBar extends StatelessWidget {
           if (i == currentIndex) return;
           switch (i) {
             case 0:
-              Get.offAllNamed(Routes.homeDashboardScreen);
+              Get.toNamed(Routes.homeDashboardScreen);
               break;
             case 1:
-              Get.offAllNamed(Routes.homeDashboardScreen);
+              //Get.offAllNamed(Routes.homeDashboardScreen);
               break;
             case 2:
-              Get.offAllNamed(Routes.assetsManagementDashboardScreen);
+              Get.toNamed(Routes.assetsManagementDashboardScreen);
               break;
             case 3:
               Get.toNamed(Routes.workOrderDetailsTabScreen);

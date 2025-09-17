@@ -1,4 +1,5 @@
 // ==================== CONTROLLER (update) ====================
+import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:get/get.dart';
 
 enum StatTone { neutral, critical, warning, success, info }
@@ -95,6 +96,14 @@ class HomeDashboardController extends GetxController {
     if (item.isAction) {
       // Get.toNamed(Routes.createWorkOrder);
       return;
+    }
+    // Get.toNamed(Routes.workOrders, arguments: {'section': section.title, 'filter': item.label});
+  }
+
+  void onSummeryHeaderTap(String title) {
+    if (title == 'Work Orders') {
+    } else if (title == 'Preventive') {
+      Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
     }
     // Get.toNamed(Routes.workOrders, arguments: {'section': section.title, 'filter': item.label});
   }

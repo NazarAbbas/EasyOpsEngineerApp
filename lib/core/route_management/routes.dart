@@ -54,4 +54,5 @@ class Routes {
   static String purposedNewSlotScreen = '/PURPOSED_NEW_SLOT_SCREEN';
   static String preventiveStartWorkScreen = '/PREVENTIVE_START_WORK_SCREEN';
   static String addResourceScreen = '/ADD_RESOURCE_SCREEN';
+  static String rescheduleScreen = '/TIMELINE__SCREEN';
 }

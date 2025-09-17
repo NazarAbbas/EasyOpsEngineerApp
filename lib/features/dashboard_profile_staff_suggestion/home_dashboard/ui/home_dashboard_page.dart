@@ -240,7 +240,7 @@ class _ProfileMenu extends StatelessWidget {
 }
 
 // ==================== SECTION + TILES ====================
-class _SectionCard extends StatelessWidget {
+class _SectionCard extends GetView<HomeDashboardController> {
   final String? title;
   final SectionStats stats;
   final void Function(StatItem item) onTap;
@@ -269,7 +269,15 @@ class _SectionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (title != null && title!.isNotEmpty) _SectionHeader(title: title!),
+          if (title != null && title!.isNotEmpty)
+            _SectionHeader(
+              title: title!,
+              onTap: () {
+                controller.onSummeryHeaderTap(title!);
+                // your navigation or action here
+              },
+            ),
+          // _SectionHeader(title: title!),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
             child: LayoutBuilder(
@@ -297,34 +305,51 @@ class _SectionCard extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
-  const _SectionHeader({required this.title});
+  final VoidCallback? onTap; // <-- pass from caller
+  final bool showChevron;
+
+  const _SectionHeader({
+    required this.title,
+    this.onTap,
+    this.showChevron = true,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Color(0xFFE9EEF5))),
-      ),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 14.5,
-              color: Color(0xFF2D2F39),
-            ),
+    // Material + InkWell for ripple on both iOS/Android
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 44,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: Color(0xFFE9EEF5))),
           ),
-          const Spacer(),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Color(0xFF7C8698),
-            size: 22,
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.5,
+                  color: Color(0xFF2D2F39),
+                ),
+              ),
+              const Spacer(),
+              if (showChevron)
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: onTap == null
+                      ? const Color(0xFFBFC6D2)
+                      : const Color(0xFF7C8698),
+                  size: 22,
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -407,7 +432,7 @@ class _StatTile extends StatelessWidget {
 }
 
 // ==================== DASHBOARD CHART CARD (NEW) ====================
-class _DashboardCard extends StatelessWidget {
+class _DashboardCard extends GetView<HomeDashboardController> {
   final String title;
   final Widget image; // pass any chart widget or image
 
@@ -431,6 +456,13 @@ class _DashboardCard extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // _SectionHeader(
+          //   title: title!,
+          //   onTap: () {
+          //     controller.onSummeryHeaderTap(controller.summary.value.title);
+          //     // your navigation or action here
+          //   },
+          // ),
           _SectionHeader(title: title),
           ClipRRect(
             borderRadius: const BorderRadius.vertical(

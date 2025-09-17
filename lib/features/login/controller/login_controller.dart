@@ -1,3 +1,4 @@
+import 'package:easy_ops/core/constants/constant.dart';
 import 'package:easy_ops/core/theme/theme_controller.dart';
 import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:easy_ops/features/login/domain/repository_impl.dart';
@@ -36,7 +37,10 @@ class LoginPageController extends GetxController {
     // Validate
     final validationMsg = Validator.validate(userName, password);
     if (validationMsg != null) {
-      AppSnackbar.error(validationMsg);
+      AppSnackbar.error(
+        validationMsg,
+        duration: Duration(seconds: Constant.snackbarSmallDuration),
+      );
       return;
     }
 
@@ -56,11 +60,16 @@ class LoginPageController extends GetxController {
         // optional: theme based on role/authorities
         // themeController.setThemeByRole('admin');
 
-        Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
-        AppSnackbar.success('Logged in successfully)');
+        // Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
+        Get.toNamed(Routes.assetsManagementDashboardScreen);
+        AppSnackbar.success(
+          'Logged in successfully)',
+          duration: Duration(seconds: Constant.snackbarSmallDuration),
+        );
       } else {
         AppSnackbar.error(
           result.message ?? 'Login failed (HTTP ${result.httpCode})',
+          duration: Duration(seconds: Constant.snackbarLongDuration),
         );
       }
     } finally {
@@ -75,11 +84,17 @@ class LoginPageController extends GetxController {
   void forgotPassword() {
     final idRaw = emailController.text.trim();
     if (idRaw.isEmpty) {
-      AppSnackbar.error('Please enter mobile number');
+      AppSnackbar.error(
+        'Please enter mobile number',
+        duration: Duration(seconds: Constant.snackbarLongDuration),
+      );
       return;
     }
     if (!Validator.isValidPhone(idRaw)) {
-      AppSnackbar.error('Please enter a valid phone number');
+      AppSnackbar.error(
+        'Please enter a valid phone number',
+        duration: Duration(seconds: Constant.snackbarLongDuration),
+      );
       return;
     }
     final phone = Validator.normalizePhone(idRaw);

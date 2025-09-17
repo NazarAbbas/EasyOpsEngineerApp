@@ -34,6 +34,7 @@ import 'package:easy_ops/features/preventive_maintenance/add_resource/controller
 import 'package:easy_ops/features/preventive_maintenance/preventive_maintenance_dashboard/controller/preventive_maintenance_dashboard_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/controller/preventive_start_work_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/controller/purposed_new_slot_controller.dart';
+import 'package:easy_ops/features/preventive_maintenance/reschedular/controller/reschedule_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/wotk_order/controller/work_order_controller.dart';
 import 'package:easy_ops/features/spare_parts/consume_spare_parts/controller/consume_spare_parts_controller.dart';
 import 'package:easy_ops/features/spare_parts/return_spare_parts/controller/return_spare_parts_controller.dart';
@@ -90,6 +91,7 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => PurposedNewSlotController());
     Get.lazyPut(() => PreventiveStartWorkController());
     Get.lazyPut(() => AddResourceController());
+    Get.lazyPut(() => RescheduleController());
     Get.put(SpareCartController(), permanent: true); // shared cart
     // Keep ONE StartWorkOrderController for the active WO.
     // (If you support multiple WO pages at once, use tags.)

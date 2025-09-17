@@ -69,12 +69,7 @@ class PreventiveStartWorkController extends GetxController {
   int get identifiedActivities => activities.length;
 
   // Actions (wire to your flows)
-  void proposeNew() => Get.snackbar(
-    'Propose',
-    'Open propose new slot',
-    snackPosition: SnackPosition.BOTTOM,
-  );
-
+  void proposeNew() => Get.toNamed(Routes.purposedNewSlotScreen);
   void addMoreResources() => Get.toNamed(Routes.addResourceScreen);
 
   // Get.snackbar(

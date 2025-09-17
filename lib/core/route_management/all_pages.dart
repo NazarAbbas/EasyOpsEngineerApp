@@ -35,6 +35,7 @@ import 'package:easy_ops/features/preventive_maintenance/add_resource/ui/add_res
 import 'package:easy_ops/features/preventive_maintenance/preventive_maintenance_dashboard/ui/preventive_maintenance_dashboard_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/ui/preventive_start_work_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/ui/purposed_new_slot_page.dart';
+import 'package:easy_ops/features/preventive_maintenance/reschedular/ui/reschedule_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/wotk_order/ui/work_order_page.dart';
 import 'package:easy_ops/features/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
 import 'package:easy_ops/features/forgot_password/ui/forgot_password_page.dart';
@@ -296,6 +297,12 @@ class AllPages {
       GetPage(
         name: Routes.addResourceScreen,
         page: () => AddResourcePage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.rescheduleScreen,
+        page: () => ReschedulePage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
