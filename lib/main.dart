@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:easy_ops/constants/constant.dart';
-import 'package:easy_ops/constants/dependency_injection/dependency_injection.dart';
-import 'package:easy_ops/constants/values/app_language.dart';
-import 'package:easy_ops/network/auth_store.dart';
-import 'package:easy_ops/route_managment/all_pages.dart';
-import 'package:easy_ops/route_managment/routes.dart';
-import 'package:easy_ops/ui/binding/screen_binding.dart';
+import 'package:easy_ops/core/constants/constant.dart';
+import 'package:easy_ops/core/injector/app_injector.dart';
+import 'package:easy_ops/core/constants/app_strings.dart';
+import 'package:easy_ops/core/network/auth_store.dart';
+import 'package:easy_ops/core/route_management/all_pages.dart';
+import 'package:easy_ops/core/route_management/routes.dart';
+import 'package:easy_ops/core/binding/screen_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'controllers/theme_controller.dart';
+import 'core/theme/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ void main() async {
       ),
     ),
   );
-  await DependencyInjection.init();
+  await AppInjector.init();
   await GetStorage.init();
   // HttpOverrides.global = MyHttpOverrides();
   // await SystemChrome.setPreferredOrientations([
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
     return Obx(() {
       return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        translations: Languages(),
+        translations: AppStrings(),
         locale: Locale(language, country),
         fallbackLocale: Locale(language, country),
         theme: themeController.currentTheme.value,
