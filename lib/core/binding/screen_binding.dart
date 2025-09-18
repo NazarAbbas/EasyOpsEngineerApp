@@ -12,7 +12,10 @@ import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/con
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions_details/controller/suggestions_details_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/controller/preventive_dashboard_controller.dart';
+import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/WorkTabsController.dart';
+import 'package:easy_ops/features/maintenance_work_order/accept_work_order/controller/accept_work_order_controller.dart';
 import 'package:easy_ops/features/maintenance_work_order/cancel_work_order/controller/cancel_work_order_controller_from_diagnostics.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure/controller/closure_controller.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';
@@ -31,11 +34,11 @@ import 'package:easy_ops/features/maintenance_work_order/start_work_submit/contr
 import 'package:easy_ops/features/maintenance_work_order/tabs/controller/work_order_details_tabs_controller.dart';
 import 'package:easy_ops/features/maintenance_work_order/timeline/controller/timeline_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/add_resource/controller/add_resource_controller.dart';
-import 'package:easy_ops/features/preventive_maintenance/preventive_maintenance_dashboard/controller/preventive_maintenance_dashboard_controller.dart';
+import 'package:easy_ops/features/preventive_maintenance/preventive_work_order_list/controller/preventive_work_order_list_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/controller/preventive_start_work_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/controller/purposed_new_slot_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/reschedular/controller/reschedule_controller.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/controller/work_order_controller.dart';
+import 'package:easy_ops/features/preventive_maintenance/wotk_order/controller/confirm_slot_controller.dart';
 import 'package:easy_ops/features/spare_parts/consume_spare_parts/controller/consume_spare_parts_controller.dart';
 import 'package:easy_ops/features/spare_parts/return_spare_parts/controller/return_spare_parts_controller.dart';
 import 'package:easy_ops/features/spare_parts/tabs/controller/spare_parts_tabs_controller.dart';
@@ -86,12 +89,14 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => SparesRequestController());
     Get.lazyPut(() => HistoryController());
     Get.lazyPut(() => TimelineController());
-    Get.lazyPut(() => PreventiveMaintenanceDashboardController());
-    Get.lazyPut(() => WorkOrderController());
+    Get.lazyPut(() => PreventiveWorkOrderListController());
+    Get.lazyPut(() => ConfirmSlotController());
     Get.lazyPut(() => PurposedNewSlotController());
     Get.lazyPut(() => PreventiveStartWorkController());
     Get.lazyPut(() => AddResourceController());
     Get.lazyPut(() => RescheduleController());
+    Get.lazyPut(() => AcceptWorkOrderController());
+    Get.lazyPut(() => PreventiveRootNavController());
     Get.put(SpareCartController(), permanent: true); // shared cart
     // Keep ONE StartWorkOrderController for the active WO.
     // (If you support multiple WO pages at once, use tags.)

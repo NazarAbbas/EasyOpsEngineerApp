@@ -40,6 +40,8 @@ class Routes {
   static String cancelWorkOrderFromDiagnosticsScreen =
       '/CANCEL_WORK_ORDER_FROM_DIAGNOSTICS_SCREEN';
   static String closureScreen = '/CLOSURE_SCREEN';
+  static String acceptedWorkOrderDetailScreen =
+      '/ACCEPTED_WORK_ORDER_DETAIL_SCREEN';
   static String signOffScreen = '/SIGN_OFF_SCREEN';
   static String returnSpareScreen = '/RETURN_SPARE_SCREEN';
   static String rcaAnalysisScreen = '/RCA_ANALYSIS_SCREEN';
@@ -55,4 +57,5 @@ class Routes {
   static String preventiveStartWorkScreen = '/PREVENTIVE_START_WORK_SCREEN';
   static String addResourceScreen = '/ADD_RESOURCE_SCREEN';
   static String rescheduleScreen = '/TIMELINE__SCREEN';
+  static String preventiveDashboardScreen = '/PREVENTIVE_DASHBOARD_SCREEN';
 }

@@ -14,6 +14,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "animations",
+      "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/animations-2.0.11",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/nazarabbas/.pub-cache/hosted/pub.dev/archive-4.0.7",
       "packageUri": "lib/",

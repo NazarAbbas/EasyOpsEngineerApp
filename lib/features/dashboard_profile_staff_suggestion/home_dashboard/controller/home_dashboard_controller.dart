@@ -103,7 +103,8 @@ class HomeDashboardController extends GetxController {
   void onSummeryHeaderTap(String title) {
     if (title == 'Work Orders') {
     } else if (title == 'Preventive') {
-      Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
+      //Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
+      Get.toNamed(Routes.preventiveDashboardScreen);
     }
     // Get.toNamed(Routes.workOrders, arguments: {'section': section.title, 'filter': item.label});
   }

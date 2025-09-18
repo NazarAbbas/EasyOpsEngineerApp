@@ -14,13 +14,15 @@ import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/ui/
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions_details/ui/suggestions_details_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/ui/support_page.dart';
+import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
+import 'package:easy_ops/features/maintenance_work_order/accept_work_order/ui/accept_work_order_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/cancel_work_order/ui/cancel_work_order_page_from_diagnostic.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure/ui/closure_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure_signature/ui/sign_off_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/diagnostics/ui/diagnostics_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/history/ui/history_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/hold_work_order/ui/hold_work_order_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
+import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/pending_activity/ui/panding_activity_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/rca_analysis/ui/rca_analysis_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
@@ -32,11 +34,11 @@ import 'package:easy_ops/features/maintenance_work_order/start_work_submit/ui/st
 import 'package:easy_ops/features/maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
 import 'package:easy_ops/features/maintenance_work_order/timeline/ui/timeline_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/add_resource/ui/add_resource_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/preventive_maintenance_dashboard/ui/preventive_maintenance_dashboard_page.dart';
+import 'package:easy_ops/features/preventive_maintenance/preventive_work_order_list/ui/preventive_work_order_list_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/ui/preventive_start_work_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/ui/purposed_new_slot_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/reschedular/ui/reschedule_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/ui/work_order_page.dart';
+import 'package:easy_ops/features/preventive_maintenance/wotk_order/ui/confirm_slot_page.dart';
 import 'package:easy_ops/features/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
 import 'package:easy_ops/features/forgot_password/ui/forgot_password_page.dart';
 import 'package:easy_ops/features/update_password/ui/update_password_page.dart';
@@ -75,7 +77,7 @@ class AllPages {
 
       GetPage(
         name: Routes.workOrderManagementScreen,
-        page: () => WorkOrdersManagementPage(),
+        page: () => WorkOrdersManagementListPage(),
         binding: ScreenBindings(),
         transition: Transition.zoom,
       ),
@@ -272,13 +274,13 @@ class AllPages {
       ),
       GetPage(
         name: Routes.preventiveMaintenanceDashboardScreen,
-        page: () => PreventiveMaintenanceDashboardPage(),
+        page: () => PreventiveWorkOrderListPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
       GetPage(
         name: Routes.preventiveWorkOrderScreen,
-        page: () => WorkOrderPage(),
+        page: () => ConfirmSlotPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
@@ -306,6 +308,25 @@ class AllPages {
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
+
+      GetPage(
+        name: Routes.workOrderDetailScreen,
+        page: () => AcceptWorkOrderPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.preventiveDashboardScreen,
+        page: () => PreventiveDashboardPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      //   GetPage(
+      //   name: Routes.updateWorkOrderTabScreen,
+      //   page: () => Update(),
+      //   binding: ScreenBindings(),
+      //   transition: Transition.rightToLeft,
+      // ),
     ];
   }
 }

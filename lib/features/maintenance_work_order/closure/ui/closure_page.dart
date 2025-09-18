@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:easy_ops/core/theme/app_colors.dart';
 import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure/controller/closure_controller.dart';
 import 'package:easy_ops/features/maintenance_work_order/closure_signature/controller/sign_off_controller.dart';

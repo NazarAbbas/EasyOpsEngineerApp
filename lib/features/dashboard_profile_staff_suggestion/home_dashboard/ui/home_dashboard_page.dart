@@ -1,6 +1,6 @@
 import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/home_dashboard/controller/home_dashboard_controller.dart';
-import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
+import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -114,39 +114,61 @@ class HomeDashboardPage extends GetView<HomeDashboardController> {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 0),
+      //bottomNavigationBar: const BottomBar(currentIndex: 0),
     );
   }
 }
 
 // ==================== HEADER ====================
+
+// ==================== HEADER (drop-in replacement) ====================
 class _Header extends StatelessWidget {
   final double height;
   final VoidCallback onBellTap;
   final void Function(String value) onMenuSelect;
+
   const _Header({
     required this.height,
     required this.onBellTap,
     required this.onMenuSelect,
   });
 
+  bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
+
   @override
   Widget build(BuildContext context) {
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
-    final top = MediaQuery.paddingOf(context).top;
+
+    final top = MediaQuery.of(context).padding.top;
+    final isTablet = _isTablet(context);
+
+    // Compact, consistent sizing
+    const double hPad = 16;
+    const double vPadTop = 8;
+    const double vPadBottom = 12;
+    final double btnSize = isTablet ? 40 : 36;
+    const double gap = 10;
+
+    // final canPop = Navigator.of(context).canPop();
+
     return Container(
       height: height,
-      padding: EdgeInsets.only(top: top + 14, left: 16, right: 16),
+      padding: const EdgeInsets.fromLTRB(
+        hPad,
+        vPadTop,
+        hPad,
+        vPadBottom,
+      ).copyWith(top: top + vPadTop),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [primary, primary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(0)),
-        boxShadow: [
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(0)),
+        boxShadow: const [
           BoxShadow(
             blurRadius: 16,
             offset: Offset(0, 8),
@@ -154,16 +176,26 @@ class _Header extends StatelessWidget {
           ),
         ],
       ),
+      // Stack prevents horizontal overflow while keeping the title centered.
       child: Stack(
+        alignment: Alignment.center,
         children: [
+          // LEFT: (optional back) + profile menu
           Align(
             alignment: Alignment.centerLeft,
-            child: _ProfileMenu(onSelected: onMenuSelect),
+
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [_ProfileMenu(onSelected: onMenuSelect)],
+            ),
           ),
-          const Align(
-            alignment: Alignment.center,
+
+          // CENTER: Title (ellipsized)
+          const Center(
             child: Text(
-              'Maintenance Engineeer',
+              'Maintenance Engineer',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.5,
@@ -171,18 +203,59 @@ class _Header extends StatelessWidget {
               ),
             ),
           ),
+
+          // RIGHT: Notification bell
           Align(
             alignment: Alignment.centerRight,
-            child: IconButton(
-              onPressed: onBellTap,
-              icon: const Icon(
-                Icons.notifications_none_rounded,
-                color: Colors.white,
+            child: SizedBox(
+              width: btnSize,
+              height: btnSize,
+              child: IconButton(
+                onPressed: onBellTap,
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints.tightFor(
+                  width: btnSize,
+                  height: btnSize,
+                ),
+                icon: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: Colors.white,
+                ),
+                tooltip: 'Notifications',
               ),
-              tooltip: 'Notifications',
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Reusable circular icon button with ripple
+class _CircleButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+
+  const _CircleButton({
+    required this.icon,
+    required this.onTap,
+    this.size = 36,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.15),
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
       ),
     );
   }

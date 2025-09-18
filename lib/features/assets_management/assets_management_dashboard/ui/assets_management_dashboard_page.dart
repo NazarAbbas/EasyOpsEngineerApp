@@ -2,7 +2,7 @@
 
 import 'package:easy_ops/features/assets_management/assets_management_dashboard/controller/assets_management_list_controller.dart';
 import 'package:easy_ops/features/assets_management/assets_management_dashboard/models/area_group.dart';
-import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_page.dart';
+import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,7 +51,7 @@ class AssetsManagementDashboardPage
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-    final double headerH = isTablet ? 148 : 120;
+    final double headerH = isTablet ? 150 : 130;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
@@ -94,12 +94,16 @@ class AssetsManagementDashboardPage
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 1),
+      // bottomNavigationBar: const BottomBar(currentIndex: 1),
     );
   }
 }
 
 /* ---------------- Header ---------------- */
+
+/* ---------------- Header (drop-in replacement) ---------------- */
+
+/* ---------------- Header (drop-in replacement) ---------------- */
 
 class _GradientHeader extends GetView<AssetsManagementDashboardController>
     implements PreferredSizeWidget {
@@ -108,12 +112,26 @@ class _GradientHeader extends GetView<AssetsManagementDashboardController>
   @override
   Size get preferredSize => const Size.fromHeight(120);
 
+  bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
+
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
+    final isTablet = _isTablet(context);
+
+    // Consistent layout
+    const double hPad = 16;
+    const double vPadTop = 8;
+    const double vPadBottom = 12;
+    final double btnSize = isTablet ? 40 : 36;
+    const double gap = 12;
+
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
+
+    final canPop = Navigator.of(context).canPop();
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -122,27 +140,65 @@ class _GradientHeader extends GetView<AssetsManagementDashboardController>
           end: Alignment.bottomRight,
         ),
       ),
-      padding: EdgeInsets.fromLTRB(16, top + 8, 16, 12),
+      padding: EdgeInsets.fromLTRB(hPad, top + vPadTop, hPad, vPadBottom),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Center(
-            child: Text(
-              'Assets Management',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.2,
-              ),
+          // Title row: Stack keeps title perfectly centered, no overflow
+          SizedBox(
+            height: btnSize,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // LEFT: optional back button
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (canPop) ...[
+                        _CircleButton(
+                          size: btnSize,
+                          icon: CupertinoIcons.chevron_back,
+                          onTap: Get.back,
+                        ),
+                        const SizedBox(width: gap),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // CENTER: Title
+                const Center(
+                  child: Text(
+                    'Assets Management',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+
+                // RIGHT: (keep empty; Stack already centers title)
+              ],
             ),
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(height: gap),
+
+          // Search + Calendar with equal spacing
           Row(
             children: [
               const Expanded(child: _SearchField()),
-              const SizedBox(width: 12),
+              const SizedBox(width: gap),
               _IconSquare(
-                onTap: () {},
+                onTap: () {
+                  // add calendar/filter action here
+                },
                 bg: Colors.white.withOpacity(0.18),
                 outline: const Color(0x66FFFFFF),
                 child: const Icon(CupertinoIcons.calendar, color: Colors.white),
@@ -150,6 +206,36 @@ class _GradientHeader extends GetView<AssetsManagementDashboardController>
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// Reusable circular icon button with ripple
+class _CircleButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+
+  const _CircleButton({
+    required this.icon,
+    required this.onTap,
+    this.size = 36,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.15),
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
       ),
     );
   }

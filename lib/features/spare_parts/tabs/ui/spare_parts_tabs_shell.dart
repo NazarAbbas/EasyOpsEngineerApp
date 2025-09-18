@@ -19,63 +19,77 @@ class SparePartsTabsShell extends GetView<SparePartsController> {
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
 
+    // ... inside SparePartsTabsShell.build(...)
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(isTablet ? 140 : 120),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [primary, primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          padding: EdgeInsets.fromLTRB(12, isTablet ? 14 : 10, 12, 8),
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Back + centered title
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: Get.back,
-                      icon: const Icon(
-                        CupertinoIcons.back,
-                        color: Colors.white,
-                      ),
-                      tooltip: 'Back',
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Spare Parts',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isTablet ? 22 : 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 48), // balance for IconButton
-                  ],
+        child: Builder(
+          builder: (context) {
+            final canPop = Navigator.of(context).canPop();
+            final top = MediaQuery.of(context).padding.top;
+            final double btnSize = isTablet ? 40 : 36;
+
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [primary, primary],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(height: 6),
-                const _HeaderTabs(),
-              ],
-            ),
-          ),
+              ),
+              padding: EdgeInsets.fromLTRB(12, top + (isTablet ? 8 : 6), 12, 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Rounded back + perfectly centered title (Stack avoids overflow)
+                  SizedBox(
+                    height: btnSize,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Left: rounded back (only if can pop)
+                        if (canPop)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: _CircleButton(
+                              size: btnSize,
+                              icon: CupertinoIcons.chevron_back,
+                              onTap: Get.back,
+                            ),
+                          ),
+
+                        // Center: title
+                        Center(
+                          child: Text(
+                            'Spare Parts',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isTablet ? 20 : 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+
+                        // Right: keep empty so the title stays centered
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const _HeaderTabs(),
+                ],
+              ),
+            );
+          },
         ),
       ),
       body: Obx(
         () => IndexedStack(
           index: controller.selectedTab.value,
-          children: const [
-            ReturnSparePartsPage(),
-            ConsumedSparePartsPage(), // <- ensure class name matches import
-          ],
+          children: const [ReturnSparePartsPage(), ConsumedSparePartsPage()],
         ),
       ),
     );
@@ -147,6 +161,35 @@ class _HeaderTabs extends GetView<SparePartsController> {
           ],
         );
       },
+    );
+  }
+}
+
+class _CircleButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+
+  const _CircleButton({
+    required this.icon,
+    required this.onTap,
+    this.size = 36,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.15),
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
+      ),
     );
   }
 }
