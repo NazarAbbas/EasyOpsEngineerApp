@@ -24,7 +24,9 @@ class ReassignWorkOrderPage extends GetView<ReassignWorkOrderController> {
   @override
   Widget build(BuildContext context) {
     final c = controller;
-
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return Obx(() {
       // Stack allows us to show a full-screen progress overlay when submitting
       return Stack(
@@ -34,7 +36,7 @@ class ReassignWorkOrderPage extends GetView<ReassignWorkOrderController> {
             appBar: AppBar(
               systemOverlayStyle: SystemUiOverlayStyle.light,
               toolbarHeight: 56,
-              backgroundColor: const Color(0xFF505764),
+              backgroundColor: primary,
               centerTitle: true,
               elevation: 0,
               leading: IconButton(
@@ -218,6 +220,9 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
     return SafeArea(
       top: false,
       child: Container(
@@ -233,7 +238,7 @@ class _BottomBar extends StatelessWidget {
                 () => OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
-                    side: const BorderSide(color: _C.primary),
+                    side: BorderSide(color: primary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -244,11 +249,11 @@ class _BottomBar extends StatelessWidget {
                           HapticFeedback.lightImpact();
                           controller.onDiscard();
                         },
-                  child: const Text(
+                  child: Text(
                     'Discard',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: _C.primary,
+                      color: primary,
                     ),
                   ),
                 ),
@@ -264,8 +269,8 @@ class _BottomBar extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                     backgroundColor: canSubmit
-                        ? _C.primary
-                        : _C.primary.withOpacity(0.5),
+                        ? primary
+                        : primary.withOpacity(0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

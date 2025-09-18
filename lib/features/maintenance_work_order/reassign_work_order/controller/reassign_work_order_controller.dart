@@ -1,3 +1,4 @@
+import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -52,8 +53,12 @@ class ReassignWorkOrderController extends GetxController {
     try {
       // simulate network latency
       await Future.delayed(const Duration(seconds: 2));
-      Get.back(); // close page (optional)
+      // Get.back(); // close page (optional)
       // success toast
+      Get.offAllNamed(
+        Routes.landingDashboardScreen,
+        arguments: {'tab': 3}, // open Work Orders
+      );
       Get.snackbar(
         'Reassigned',
         'Successfully!',

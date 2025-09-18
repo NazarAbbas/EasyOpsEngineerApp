@@ -5,10 +5,10 @@ import 'package:easy_ops/features/assets_management/assets_management_dashboard/
 import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-/* ---------------- Colors ---------------- */
-
+/* ─── Colors ─── */
 class _C {
   static const primary = Color(0xFF2F6BFF);
   static const surface = Colors.white;
@@ -18,8 +18,7 @@ class _C {
   static const muted = Color(0xFF7C8698);
 }
 
-/* ---------------- Tab filter helper ---------------- */
-
+/* ─── Filter helper ─── */
 bool matchesTab(AssetItem it, int tabIndex) {
   // 0: All, 1: Critical, 2: Semi Critical, 3: Non Critical
   if (tabIndex == 0) return true;
@@ -40,8 +39,7 @@ bool matchesTab(AssetItem it, int tabIndex) {
   }
 }
 
-/* ---------------- Page ---------------- */
-
+/* ─── Page ─── */
 class AssetsManagementDashboardPage
     extends GetView<AssetsManagementDashboardController> {
   const AssetsManagementDashboardPage({super.key});
@@ -51,47 +49,20 @@ class AssetsManagementDashboardPage
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-    final double headerH = isTablet ? 150 : 130;
+    final double headerH = isTablet ? 140 : 118;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // prevent bottom overflow on keyboard
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(headerH),
         child: const _GradientHeader(),
       ),
-      body: Column(
+      body: const Column(
         children: [
-          const _Tabs(),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Obx(() {
-              final tab = controller.selectedTab.value;
-
-              final groupsToShow = controller.groups
-                  .where((g) => g.items.any((it) => matchesTab(it, tab)))
-                  .toList();
-
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-                itemCount: groupsToShow.length,
-                separatorBuilder: (_, __) =>
-                    const Divider(height: 28, color: _C.border),
-                itemBuilder: (_, i) {
-                  final g = groupsToShow[i];
-                  final originalIndex = controller.groups.indexOf(g);
-                  return _GroupSection(
-                    index: originalIndex,
-                    group: g,
-                    currentTab: tab,
-                    onToggle: () => controller.toggle(originalIndex),
-                    onRowTap: () => controller.onGroupTap(g), // optional
-                    onItemTap: (asset) =>
-                        controller.onAssetTap(g, asset), // ROW TAP
-                  );
-                },
-              );
-            }),
-          ),
+          _TabsWithCounts(),
+          SizedBox(height: 6),
+          Expanded(child: _GroupsList()),
         ],
       ),
       // bottomNavigationBar: const BottomBar(currentIndex: 1),
@@ -99,111 +70,248 @@ class AssetsManagementDashboardPage
   }
 }
 
-/* ---------------- Header ---------------- */
-
-/* ---------------- Header (drop-in replacement) ---------------- */
-
-/* ---------------- Header (drop-in replacement) ---------------- */
-
+/* ─── Header ─── */
 class _GradientHeader extends GetView<AssetsManagementDashboardController>
     implements PreferredSizeWidget {
-  const _GradientHeader();
+  const _GradientHeader({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(120);
+  Size get preferredSize => const Size.fromHeight(118);
 
   bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
 
   @override
   Widget build(BuildContext context) {
-    final top = MediaQuery.of(context).padding.top;
     final isTablet = _isTablet(context);
-
-    // Consistent layout
-    const double hPad = 16;
-    const double vPadTop = 8;
-    const double vPadBottom = 12;
-    final double btnSize = isTablet ? 40 : 36;
-    const double gap = 12;
-
     final primary =
         Theme.of(context).appBarTheme.backgroundColor ??
         Theme.of(context).colorScheme.primary;
 
-    final canPop = Navigator.of(context).canPop();
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [primary, primary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light, // white status bar icons on blue
+      child: Container(
+        // Paint BLUE behind the status bar too
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [primary, primary.withOpacity(0.94)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      padding: EdgeInsets.fromLTRB(hPad, top + vPadTop, hPad, vPadBottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Title row: Stack keeps title perfectly centered, no overflow
-          SizedBox(
-            height: btnSize,
-            child: Stack(
-              alignment: Alignment.center,
+        // Now put SafeArea inside so only content avoids the notch
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(14, 8, 14, 10 + (isTablet ? 2 : 0)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // LEFT: optional back button
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (canPop) ...[
-                        _CircleButton(
-                          size: btnSize,
-                          icon: CupertinoIcons.chevron_back,
-                          onTap: Get.back,
-                        ),
-                        const SizedBox(width: gap),
-                      ],
-                    ],
-                  ),
-                ),
-
-                // CENTER: Title
                 const Center(
                   child: Text(
                     'Assets Management',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18.5,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      letterSpacing: 0.2,
+                      letterSpacing: 0.1,
                     ),
                   ),
                 ),
-
-                // RIGHT: (keep empty; Stack already centers title)
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Expanded(child: _SearchField()),
+                    const SizedBox(width: 10),
+                    _IconSquare(
+                      onTap: () {},
+                      bg: Colors.white.withOpacity(0.18),
+                      outline: const Color(0x66FFFFFF),
+                      child: const Icon(
+                        CupertinoIcons.calendar,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
 
-          const SizedBox(height: gap),
+/* ─── Tabs (scrollable, no overflow) ─── */
+class _TabsWithCounts extends GetView<AssetsManagementDashboardController> {
+  const _TabsWithCounts({super.key});
 
-          // Search + Calendar with equal spacing
-          Row(
-            children: [
-              const Expanded(child: _SearchField()),
-              const SizedBox(width: gap),
-              _IconSquare(
-                onTap: () {
-                  // add calendar/filter action here
-                },
-                bg: Colors.white.withOpacity(0.18),
-                outline: const Color(0x66FFFFFF),
-                child: const Icon(CupertinoIcons.calendar, color: Colors.white),
-              ),
-            ],
+  bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
+
+  int _countForTab(List<AreaGroup> groups, int tab) {
+    var total = 0;
+    for (final g in groups) {
+      total += g.items.where((it) => matchesTab(it, tab)).length;
+    }
+    return total;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isTablet = _isTablet(context);
+    final double tabH = isTablet ? 36 : 32;
+    final double fs = isTablet ? 14 : 13;
+    final double underlineH = isTablet ? 3 : 2.5;
+    final double underlineRadius = 2;
+    final primary =
+        Theme.of(context).appBarTheme.backgroundColor ??
+        Theme.of(context).colorScheme.primary;
+
+    return Container(
+      color: primary,
+      padding: EdgeInsets.only(bottom: 6), // room for underline
+      child: Obx(() {
+        final groups = controller.groups;
+        final selected = controller.selectedTab.value;
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: List.generate(controller.tabs.length, (i) {
+              final count = _countForTab(groups, i);
+              final active = selected == i;
+
+              return Padding(
+                padding: EdgeInsets.only(right: isTablet ? 14 : 10),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () => controller.setSelectedTab(i),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isTablet ? 10 : 8,
+                    ),
+                    height: tabH,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RichText(
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: fs,
+                              fontWeight: active
+                                  ? FontWeight.w900
+                                  : FontWeight.w600,
+                              height: 1.1,
+                            ),
+                            children: [
+                              TextSpan(text: controller.tabs[i]),
+                              const TextSpan(text: ' '),
+                              TextSpan(
+                                text: '($count)',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: isTablet ? 6 : 5),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          curve: Curves.easeOut,
+                          height: underlineH,
+                          width: active ? null : 0,
+                          constraints: BoxConstraints(
+                            minWidth: active ? 18 : 0,
+                            maxWidth: 64,
+                          ),
+                          decoration: BoxDecoration(
+                            color: active ? Colors.white : Colors.transparent,
+                            borderRadius: BorderRadius.circular(
+                              underlineRadius,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+/* ─── Groups list ─── */
+class _GroupsList extends GetView<AssetsManagementDashboardController> {
+  const _GroupsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomSafe = MediaQuery.of(context).padding.bottom;
+    return Obx(() {
+      final tab = controller.selectedTab.value;
+      final groupsToShow = controller.groups
+          .where((g) => g.items.any((it) => matchesTab(it, tab)))
+          .toList();
+
+      if (groupsToShow.isEmpty) return const _EmptyState();
+
+      return RefreshIndicator(
+        onRefresh: () async {
+          try {
+            await controller.refreshData(); // implement in controller
+          } catch (_) {}
+        },
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(16, 12, 16, 16 + bottomSafe + 56),
+          itemCount: groupsToShow.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          itemBuilder: (_, i) {
+            final g = groupsToShow[i];
+            final originalIndex = controller.groups.indexOf(g);
+            return _GroupSection(
+              index: originalIndex,
+              group: g,
+              currentTab: tab,
+              onToggle: () => controller.toggle(originalIndex),
+              onRowTap: () => controller.onGroupTap(g),
+              onItemTap: (asset) => controller.onAssetTap(g, asset),
+            );
+          },
+        ),
+      );
+    });
+  }
+}
+
+/* ─── Empty state ─── */
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(CupertinoIcons.cube_box, size: 36, color: _C.muted),
+          SizedBox(height: 8),
+          Text(
+            'No assets match your filters',
+            style: TextStyle(color: _C.muted, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -211,125 +319,7 @@ class _GradientHeader extends GetView<AssetsManagementDashboardController>
   }
 }
 
-// Reusable circular icon button with ripple
-class _CircleButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  final double size;
-
-  const _CircleButton({
-    required this.icon,
-    required this.onTap,
-    this.size = 36,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white.withOpacity(0.15),
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: Icon(icon, color: Colors.white, size: 20),
-        ),
-      ),
-    );
-  }
-}
-
-/* ---------------- Tabs ---------------- */
-
-class _Tabs extends GetView<AssetsManagementDashboardController> {
-  const _Tabs();
-
-  bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
-
-  @override
-  Widget build(BuildContext context) {
-    final isTablet = _isTablet(context);
-    final double tabH = isTablet ? 28 : 18;
-    final double fs = isTablet ? 15 : 13.5;
-    final double uThick = isTablet ? 3.5 : 3;
-    final double uSide = isTablet ? 12 : 10;
-    final double uGap = isTablet ? 8 : 6;
-    final primary =
-        Theme.of(context).appBarTheme.backgroundColor ??
-        Theme.of(context).colorScheme.primary;
-
-    return Container(
-      color: primary,
-      padding: const EdgeInsets.only(bottom: 10),
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final count = controller.tabs.length;
-          final segW = c.maxWidth / count;
-
-          return Stack(
-            alignment: Alignment.bottomLeft,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: uGap + uThick),
-                child: Row(
-                  children: List.generate(count, (i) {
-                    return Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => controller.setSelectedTab(i),
-                        child: SizedBox(
-                          height: tabH,
-                          child: Center(
-                            child: Obx(() {
-                              final active = controller.selectedTab.value == i;
-                              return Text(
-                                controller.tabs[i],
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: fs,
-                                  fontWeight: active
-                                      ? FontWeight.w900
-                                      : FontWeight.w500,
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              Obx(() {
-                final left = uSide + controller.selectedTab.value * segW;
-                final width = segW - uSide * 2;
-                return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOut,
-                  left: left,
-                  bottom: 0,
-                  width: width,
-                  height: uThick,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                );
-              }),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-/* ---------------- Group Section ---------------- */
-
+/* ─── Group section ─── */
 class _GroupSection extends StatelessWidget {
   final int index;
   final AreaGroup group;
@@ -339,6 +329,7 @@ class _GroupSection extends StatelessWidget {
   final ValueChanged<AssetItem>? onItemTap; // row press
 
   const _GroupSection({
+    super.key,
     required this.index,
     required this.group,
     required this.currentTab,
@@ -361,70 +352,59 @@ class _GroupSection extends StatelessWidget {
           // Header (expand/collapse)
           Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               onTap: () {
                 onToggle();
                 onRowTap?.call();
               },
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
+                duration: const Duration(milliseconds: 180),
                 curve: Curves.easeOut,
-                padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                 decoration: BoxDecoration(
                   color: _C.surface,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: expanded ? _C.primary : _C.border,
-                    width: expanded ? 1.6 : 1,
+                    width: expanded ? 1.4 : 1,
                   ),
                   boxShadow: [
                     if (expanded)
                       BoxShadow(
-                        color: _C.primary.withOpacity(0.12),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
+                        color: _C.primary.withOpacity(0.10),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
                       ),
                   ],
                 ),
                 child: Row(
                   children: [
+                    _CountBadge(count: filteredItems.length),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            group.title,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: _C.text,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18,
-                              height: 1.1,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${filteredItems.length} nos',
-                            style: const TextStyle(
-                              color: _C.muted,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        group.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: _C.text,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16.5,
+                          height: 1.1,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     AnimatedRotation(
                       turns: expanded ? 0.5 : 0.0,
-                      duration: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 160),
                       curve: Curves.easeOut,
                       child: const Icon(
                         CupertinoIcons.chevron_down,
                         color: _C.muted,
+                        size: 18,
                       ),
                     ),
                   ],
@@ -437,15 +417,15 @@ class _GroupSection extends StatelessWidget {
           AnimatedCrossFade(
             firstChild: const SizedBox.shrink(),
             secondChild: Padding(
-              padding: const EdgeInsets.only(top: 14),
+              padding: const EdgeInsets.only(top: 12),
               child: Column(
                 children: filteredItems
                     .map(
                       (it) => Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
+                        padding: const EdgeInsets.only(bottom: 12),
                         child: _AssetCard(
                           item: it,
-                          onTap: () => onItemTap?.call(it), // PRESS ROW
+                          onTap: () => onItemTap?.call(it),
                         ),
                       ),
                     )
@@ -455,7 +435,7 @@ class _GroupSection extends StatelessWidget {
             crossFadeState: expanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 160),
           ),
         ],
       );
@@ -463,8 +443,35 @@ class _GroupSection extends StatelessWidget {
   }
 }
 
-/* ---------------- Asset Card (pressable row) ---------------- */
+class _CountBadge extends StatelessWidget {
+  final int count;
+  const _CountBadge({required this.count});
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: _C.card,
+        border: Border.all(color: _C.border),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Center(
+        child: Text(
+          '$count',
+          style: const TextStyle(
+            color: _C.text,
+            fontWeight: FontWeight.w900,
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/* ─── Asset card ─── */
 class _AssetCard extends StatelessWidget {
   final AssetItem item;
   final VoidCallback? onTap;
@@ -472,7 +479,7 @@ class _AssetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(14);
+    final borderRadius = BorderRadius.circular(12);
 
     return Material(
       color: Colors.transparent,
@@ -482,91 +489,92 @@ class _AssetCard extends StatelessWidget {
         onTap: onTap,
         child: Stack(
           children: [
-            // Soft card
+            // Card
             Container(
               decoration: BoxDecoration(
-                color: _C.card,
+                color: _C.surface,
                 borderRadius: borderRadius,
                 border: Border.all(color: _C.border),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.03),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top row: name | brand + pill
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              color: _C.text,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 16,
-                              height: 1.2,
-                            ),
-                            children: [
-                              TextSpan(text: item.name),
-                              const TextSpan(text: '   |   '),
-                              TextSpan(
-                                text: item.brand,
+                  _Avatar(color: item.pillColor, text: item.name),
+                  const SizedBox(width: 10),
+                  // Title/desc/state column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Top line: LEFT = title (ellipsized) | RIGHT = pill (fixed to right)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${item.name} · ${item.brand}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
+                                  color: _C.text,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  height: 1.2,
                                 ),
                               ),
-                            ],
+                            ),
+                            const SizedBox(width: 8),
+                            _Pill(text: item.pill, color: item.pillColor),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        // Description
+                        Text(
+                          item.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: _C.text,
+                            fontSize: 14,
+                            height: 1.28,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      _Pill(text: item.pill, color: item.pillColor),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Description
-                  Text(
-                    item.description,
-                    style: const TextStyle(
-                      color: _C.text,
-                      fontSize: 15,
-                      height: 1.28,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Footer: state link right
-                  Row(
-                    children: [
-                      const Spacer(),
-                      const Icon(
-                        CupertinoIcons.check_mark_circled_solid,
-                        size: 14,
-                        color: _C.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        item.state,
-                        style: const TextStyle(
-                          color: _C.primary,
-                          fontWeight: FontWeight.w800,
+                        const SizedBox(height: 8),
+                        // Footer
+                        Row(
+                          children: [
+                            const Spacer(),
+                            const Icon(
+                              CupertinoIcons.check_mark_circled_solid,
+                              size: 14,
+                              color: _C.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              item.state,
+                              style: const TextStyle(
+                                color: _C.primary,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 12.5,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Accent stripe (based on pill color)
+            // Accent stripe
             Positioned.fill(
               left: 0,
               child: Align(
@@ -577,7 +585,7 @@ class _AssetCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: item.pillColor,
                     borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(14),
+                      left: Radius.circular(12),
                     ),
                   ),
                 ),
@@ -590,8 +598,45 @@ class _AssetCard extends StatelessWidget {
   }
 }
 
-/* ---------------- Small bits ---------------- */
+class _Avatar extends StatelessWidget {
+  final Color color;
+  final String text;
+  const _Avatar({required this.color, required this.text});
 
+  String _initials(String s) {
+    final parts = s.trim().split(RegExp(r'\s+'));
+    final first = parts.isNotEmpty && parts.first.isNotEmpty
+        ? parts.first[0]
+        : '';
+    final last = parts.length > 1 && parts.last.isNotEmpty ? parts.last[0] : '';
+    return (first + last).toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        border: Border.all(color: color.withOpacity(0.35)),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Center(
+        child: Text(
+          _initials(text),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w900,
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/* ─── Small bits ─── */
 class _Pill extends StatelessWidget {
   final String text;
   final Color color;
@@ -599,17 +644,23 @@ class _Pill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Max width keeps layout stable and prevents pushing title
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      constraints: const BoxConstraints(maxWidth: 120),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Text(
         text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w800,
+          fontSize: 11.5,
         ),
       ),
     );
@@ -617,18 +668,18 @@ class _Pill extends StatelessWidget {
 }
 
 class _SearchField extends GetView<AssetsManagementDashboardController> {
-  const _SearchField();
+  const _SearchField({super.key});
 
   bool _isTablet(BuildContext c) => MediaQuery.of(c).size.shortestSide >= 600;
 
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-    final double h = isTablet ? 52 : 44;
-    final double r = isTablet ? 12 : 10;
-    final double pad = isTablet ? 16 : 12;
-    final double fs = isTablet ? 16 : 14;
-    final double icon = isTablet ? 20 : 18;
+    final double h = isTablet ? 46 : 40;
+    final double r = isTablet ? 10 : 8;
+    final double pad = isTablet ? 14 : 12;
+    final double fs = isTablet ? 14.5 : 13;
+    final double icon = isTablet ? 18 : 16;
 
     return Container(
       height: h,
@@ -647,9 +698,9 @@ class _SearchField extends GetView<AssetsManagementDashboardController> {
           hintStyle: TextStyle(color: Colors.white70, fontSize: fs),
           border: InputBorder.none,
           isDense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: pad, vertical: 10),
+          contentPadding: EdgeInsets.symmetric(horizontal: pad, vertical: 8),
           suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 6),
             child: Icon(
               CupertinoIcons.search,
               color: Colors.white70,
@@ -658,7 +709,7 @@ class _SearchField extends GetView<AssetsManagementDashboardController> {
           ),
           suffixIconConstraints: BoxConstraints(
             minHeight: h,
-            minWidth: isTablet ? 48 : 40,
+            minWidth: isTablet ? 44 : 38,
           ),
         ),
       ),
@@ -672,6 +723,7 @@ class _IconSquare extends StatelessWidget {
   final Color? bg;
   final Color? outline;
   const _IconSquare({
+    super.key,
     required this.child,
     required this.onTap,
     this.bg,
@@ -683,8 +735,8 @@ class _IconSquare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTablet = _isTablet(context);
-    final double size = isTablet ? 52 : 44;
-    final double radius = isTablet ? 10 : 8;
+    final double size = isTablet ? 44 : 40;
+    final double radius = isTablet ? 9 : 8;
 
     return Material(
       color: bg ?? Colors.white,
@@ -701,35 +753,6 @@ class _IconSquare extends StatelessWidget {
           child: Center(child: child),
         ),
       ),
-    );
-  }
-}
-
-/* ---------------- Demo main (optional) ---------------- */
-
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.put(AssetsManagementDashboardController());
-  runApp(const _DemoApp());
-}
-
-class _DemoApp extends StatelessWidget {
-  const _DemoApp();
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Assets Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: _C.primary),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: _C.primary,
-          foregroundColor: Colors.white,
-        ),
-      ),
-      debugShowCheckedModeBanner: false,
-      home: const AssetsManagementDashboardPage(),
     );
   }
 }

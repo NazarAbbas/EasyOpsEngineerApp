@@ -14,6 +14,7 @@ import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/ui/
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions_details/ui/suggestions_details_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/ui/support_page.dart';
+import 'package:easy_ops/features/dashboard_screens/landing_dashboard/ui/landing_dashboard_page.dart';
 import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/accept_work_order/ui/accept_work_order_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/cancel_work_order/ui/cancel_work_order_page_from_diagnostic.dart';
@@ -321,6 +322,14 @@ class AllPages {
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
+
+      GetPage(
+        name: Routes.landingDashboardScreen,
+        page: () => LandingDashboardTabShell(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+
       //   GetPage(
       //   name: Routes.updateWorkOrderTabScreen,
       //   page: () => Update(),

@@ -58,4 +58,5 @@ class Routes {
   static String addResourceScreen = '/ADD_RESOURCE_SCREEN';
   static String rescheduleScreen = '/TIMELINE__SCREEN';
   static String preventiveDashboardScreen = '/PREVENTIVE_DASHBOARD_SCREEN';
+  static String landingDashboardScreen = '/LANDING_DASHBOARD_SCREEN';
 }

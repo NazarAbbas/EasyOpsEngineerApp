@@ -12,6 +12,7 @@ import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/con
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions_details/controller/suggestions_details_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
+import 'package:easy_ops/features/dashboard_screens/landing_dashboard/controller/landing_dashboard_nav_controller.dart';
 import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/controller/preventive_dashboard_controller.dart';
 import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/WorkTabsController.dart';
@@ -90,13 +91,19 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => HistoryController());
     Get.lazyPut(() => TimelineController());
     Get.lazyPut(() => PreventiveWorkOrderListController());
-    Get.lazyPut(() => ConfirmSlotController());
+    Get.lazyPut(() => PreventiveWorkOrderController());
     Get.lazyPut(() => PurposedNewSlotController());
     Get.lazyPut(() => PreventiveStartWorkController());
     Get.lazyPut(() => AddResourceController());
     Get.lazyPut(() => RescheduleController());
     Get.lazyPut(() => AcceptWorkOrderController());
-    Get.lazyPut(() => PreventiveRootNavController());
+
+    //Get.lazyPut(() => PreventiveRootNavController());
+    Get.lazyPut<LandingRootNavController>(
+      () => LandingRootNavController(),
+      fenix: true,
+    );
+
     Get.put(SpareCartController(), permanent: true); // shared cart
     // Keep ONE StartWorkOrderController for the active WO.
     // (If you support multiple WO pages at once, use tags.)

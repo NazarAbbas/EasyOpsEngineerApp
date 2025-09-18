@@ -1,3 +1,4 @@
+import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:get/get.dart';
 
 class CancelWorkOrderControllerFromDiagnostics extends GetxController {
@@ -28,7 +29,12 @@ class CancelWorkOrderControllerFromDiagnostics extends GetxController {
         remarks: remarks.value.trim().isEmpty ? null : remarks.value.trim(),
       );
       isLoading.value = false;
-      Get.back(result: true); // pop with success
+      // Get.back(result: true); // pop with success
+      Get.offAllNamed(
+        Routes.landingDashboardScreen,
+        arguments: {'tab': 3}, // open Work Orders
+      );
+
       Get.snackbar('Success', 'Work order canceled');
     } catch (e) {
       isLoading.value = false;

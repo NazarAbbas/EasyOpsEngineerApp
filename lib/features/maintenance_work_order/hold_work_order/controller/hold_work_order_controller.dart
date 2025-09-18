@@ -1,4 +1,5 @@
 // hold_work_order_page.dart
+import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -122,7 +123,11 @@ class HoldWorkOrderController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(12),
       );
-      Get.back(); // close page
+      // Get.back(); // close page
+      Get.offAllNamed(
+        Routes.landingDashboardScreen,
+        arguments: {'tab': 3}, // open Work Orders
+      );
     } catch (_) {
       Get.snackbar(
         'Failed',

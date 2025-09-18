@@ -122,7 +122,12 @@ class ClosureController extends GetxController {
 
     isLoading.value = false;
 
-    Get.offAllNamed(Routes.workOrderManagementScreen);
+    Get.offAllNamed(
+      Routes.landingDashboardScreen,
+      arguments: {'tab': 3}, // open Work Orders
+    );
+
+    //Get.offAllNamed(Routes.workOrderManagementScreen);
 
     Get.snackbar(
       'Resolved',

@@ -19,6 +19,12 @@ class AssetsManagementDashboardController extends GetxController {
     _loadInitial();
   }
 
+  Future<void> refreshData() async {
+    // Example: reload from API or local cache
+    //await fetchGroupsFromApi();
+    update();
+  }
+
   void setSelectedTab(int i) => selectedTab.value = i;
   void setQuery(String v) => query.value = v;
 
@@ -105,12 +111,12 @@ class AssetsManagementDashboardController extends GetxController {
         items: sample('Siemens'),
       ),
       AreaGroup(
-        title: 'Plant A | Assets Shop',
+        title: 'Plant B | Assets Shop',
         expanded: false,
         items: sample('Fanuc'),
       ),
       AreaGroup(
-        title: 'Plant A | Banburry',
+        title: 'Plant C | Banburry',
         expanded: false,
         items: sample('Bosch'),
       ),
