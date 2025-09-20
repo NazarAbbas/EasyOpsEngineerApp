@@ -5,7 +5,7 @@
 
 import 'package:easy_ops/core/theme/app_colors.dart';
 import 'package:easy_ops/core/route_management/routes.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/controller/confirm_slot_controller.dart';
+import 'package:easy_ops/features/preventive_maintenance/confirm_wotk_order_slot/controller/confirm_work_order_slot_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

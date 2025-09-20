@@ -3,7 +3,7 @@
 
 import 'dart:async';
 import 'package:easy_ops/core/route_management/routes.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/models/work_order_model.dart';
+import 'package:easy_ops/features/preventive_maintenance/confirm_wotk_order_slot/models/confirm_work_order_slot_model.dart';
 import 'package:get/get.dart';
 
 class PreventiveWorkOrderController extends GetxController {
@@ -50,6 +50,11 @@ class PreventiveWorkOrderController extends GetxController {
 
   Future<void> confirmSelection() async {
     Get.toNamed(Routes.preventiveStartWorkScreen);
+
+    // Get.offAllNamed(
+    //   Routes.preventiveDashboardScreen,
+    //   arguments: {'tab': 3}, // open Work Orders
+    // );
 
     // final id = selectedSlotId.value;
     // if (id == null) {

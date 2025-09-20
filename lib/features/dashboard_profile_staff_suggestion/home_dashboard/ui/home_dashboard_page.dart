@@ -529,14 +529,14 @@ class _DashboardCard extends GetView<HomeDashboardController> {
       ),
       child: Column(
         children: [
-          // _SectionHeader(
-          //   title: title!,
-          //   onTap: () {
-          //     controller.onSummeryHeaderTap(controller.summary.value.title);
-          //     // your navigation or action here
-          //   },
-          // ),
-          _SectionHeader(title: title),
+          _SectionHeader(
+            title: title!,
+            onTap: () {
+              controller.onSummeryHeaderTap(title);
+              // your navigation or action here
+            },
+          ),
+          // _SectionHeader(title: title),
           ClipRRect(
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(14),

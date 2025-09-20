@@ -59,4 +59,6 @@ class Routes {
   static String rescheduleScreen = '/TIMELINE__SCREEN';
   static String preventiveDashboardScreen = '/PREVENTIVE_DASHBOARD_SCREEN';
   static String landingDashboardScreen = '/LANDING_DASHBOARD_SCREEN';
+  static String staffScreen = '/STAFF_SCREEN';
+  static String myDashboardScreen = '/MY_DASHBOARD_SCREEN';
 }

@@ -9,6 +9,7 @@ import 'package:easy_ops/features/assets_management/pm_checklist/ui/pm_checklist
 import 'package:easy_ops/features/assets_management/pm_schedular/ui/pm_schedular_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/alerts/ui/alerts_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/home_dashboard/ui/home_dashboard_page.dart';
+import 'package:easy_ops/features/dashboard_profile_staff_suggestion/my_dashboard/ui/my_dashboard_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/new_suggestion/ui/new_suggestion_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/ui/profile_page.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
@@ -39,9 +40,10 @@ import 'package:easy_ops/features/preventive_maintenance/preventive_work_order_l
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/ui/preventive_start_work_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/ui/purposed_new_slot_page.dart';
 import 'package:easy_ops/features/preventive_maintenance/reschedular/ui/reschedule_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/ui/confirm_slot_page.dart';
+import 'package:easy_ops/features/preventive_maintenance/confirm_wotk_order_slot/ui/confirm_work_order_slot_page.dart';
 import 'package:easy_ops/features/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
 import 'package:easy_ops/features/forgot_password/ui/forgot_password_page.dart';
+import 'package:easy_ops/features/staff/ui/staff_tabs_page.dart';
 import 'package:easy_ops/features/update_password/ui/update_password_page.dart';
 import 'package:easy_ops/features/login/ui/login_page.dart';
 import 'package:easy_ops/features/splash/ui/spalsh_page.dart';
@@ -326,6 +328,18 @@ class AllPages {
       GetPage(
         name: Routes.landingDashboardScreen,
         page: () => LandingDashboardTabShell(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.staffScreen,
+        page: () => StaffTabsPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.myDashboardScreen,
+        page: () => MyDashboardPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),

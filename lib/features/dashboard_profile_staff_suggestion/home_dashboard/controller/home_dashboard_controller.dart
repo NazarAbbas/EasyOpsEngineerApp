@@ -102,11 +102,22 @@ class HomeDashboardController extends GetxController {
 
   void onSummeryHeaderTap(String title) {
     if (title == 'Work Orders') {
+      Get.offAllNamed(
+        Routes.landingDashboardScreen,
+        arguments: {'tab': 3}, // open Work Orders
+      );
     } else if (title == 'Preventive') {
-      //Get.toNamed(Routes.preventiveMaintenanceDashboardScreen);
       Get.toNamed(Routes.preventiveDashboardScreen);
+    } else if (title == 'My Team') {
+      Get.toNamed(Routes.staffScreen);
+    } else if (title == 'Dashboard') {
+      Get.toNamed(Routes.myDashboardScreen);
+    } else if (title == 'Assets') {
+      Get.offAllNamed(
+        Routes.landingDashboardScreen,
+        arguments: {'tab': 2}, // open Work Orders
+      );
     }
-    // Get.toNamed(Routes.workOrders, arguments: {'section': section.title, 'filter': item.label});
   }
 
   void signOut() {

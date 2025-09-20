@@ -7,6 +7,7 @@ import 'package:easy_ops/features/assets_management/pm_checklist/controller/pm_c
 import 'package:easy_ops/features/assets_management/pm_schedular/controller/pm_schedular_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/alerts/controller/alerts_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/home_dashboard/controller/home_dashboard_controller.dart';
+import 'package:easy_ops/features/dashboard_profile_staff_suggestion/my_dashboard/controller/my_dashboard_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/new_suggestion/controller/new_suggestions_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/controller/profile_controller.dart';
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/controller/suggestion_controller.dart';
@@ -14,7 +15,6 @@ import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions
 import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/controller/support_controller.dart';
 import 'package:easy_ops/features/dashboard_screens/landing_dashboard/controller/landing_dashboard_nav_controller.dart';
 import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/controller/preventive_dashboard_controller.dart';
-import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
 import 'package:easy_ops/features/maintenance_work_order/WorkTabsController.dart';
 import 'package:easy_ops/features/maintenance_work_order/accept_work_order/controller/accept_work_order_controller.dart';
 import 'package:easy_ops/features/maintenance_work_order/cancel_work_order/controller/cancel_work_order_controller_from_diagnostics.dart';
@@ -39,13 +39,15 @@ import 'package:easy_ops/features/preventive_maintenance/preventive_work_order_l
 import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/controller/preventive_start_work_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/controller/purposed_new_slot_controller.dart';
 import 'package:easy_ops/features/preventive_maintenance/reschedular/controller/reschedule_controller.dart';
-import 'package:easy_ops/features/preventive_maintenance/wotk_order/controller/confirm_slot_controller.dart';
+import 'package:easy_ops/features/preventive_maintenance/confirm_wotk_order_slot/controller/confirm_work_order_slot_controller.dart';
 import 'package:easy_ops/features/spare_parts/consume_spare_parts/controller/consume_spare_parts_controller.dart';
 import 'package:easy_ops/features/spare_parts/return_spare_parts/controller/return_spare_parts_controller.dart';
 import 'package:easy_ops/features/spare_parts/tabs/controller/spare_parts_tabs_controller.dart';
 import 'package:easy_ops/features/forgot_password/controller/forgot_password_controller.dart';
 import 'package:easy_ops/features/login/controller/login_controller.dart';
 import 'package:easy_ops/features/splash/controller/splash_controller.dart';
+import 'package:easy_ops/features/staff/controller/current_shift_controller.dart';
+import 'package:easy_ops/features/staff/controller/staff_search_controller.dart';
 import 'package:easy_ops/features/update_password/controller/update_password_controller.dart';
 import 'package:get/instance_manager.dart';
 
@@ -97,8 +99,16 @@ class ScreenBindings implements Bindings {
     Get.lazyPut(() => AddResourceController());
     Get.lazyPut(() => RescheduleController());
     Get.lazyPut(() => AcceptWorkOrderController());
+    Get.lazyPut(() => CurrentShiftController());
+    Get.lazyPut(() => StaffSearchController());
+    Get.lazyPut(() => MyDashboardController());
 
     //Get.lazyPut(() => PreventiveRootNavController());
+    Get.lazyPut<PreventiveRootNavController>(
+      () => PreventiveRootNavController(),
+      fenix: true,
+    );
+
     Get.lazyPut<LandingRootNavController>(
       () => LandingRootNavController(),
       fenix: true,

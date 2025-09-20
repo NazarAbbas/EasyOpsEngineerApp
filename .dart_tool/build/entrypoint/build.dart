@@ -1,16 +1,15 @@
 // @dart=3.6
 // ignore_for_file: directives_ordering
-// build_runner >=2.4.16
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:build_runner/src/package_graph/apply_builders.dart' as _i1;
+import 'package:build_runner_core/build_runner_core.dart' as _i1;
 import 'package:retrofit_generator/retrofit_generator.dart' as _i2;
 import 'package:json_serializable/builder.dart' as _i3;
-import 'package:source_gen/builder.dart' as _i4;
-import 'dart:isolate' as _i5;
-import 'package:build_runner/src/build_script_generate/build_process_state.dart'
-    as _i6;
-import 'package:build_runner/build_runner.dart' as _i7;
-import 'dart:io' as _i8;
+import 'package:floor_generator/builder.dart' as _i4;
+import 'package:source_gen/builder.dart' as _i5;
+import 'package:build_resolvers/builder.dart' as _i6;
+import 'dart:isolate' as _i7;
+import 'package:build_runner/build_runner.dart' as _i8;
+import 'dart:io' as _i9;
 
 final _builders = <_i1.BuilderApplication>[
   _i1.apply(
@@ -28,26 +27,44 @@ final _builders = <_i1.BuilderApplication>[
     appliesBuilders: const [r'source_gen:combining_builder'],
   ),
   _i1.apply(
+    r'floor_generator:floor_generator',
+    [_i4.floorBuilder],
+    _i1.toDependentsOf(r'floor_generator'),
+    hideOutput: true,
+    appliesBuilders: const [r'source_gen:combining_builder'],
+  ),
+  _i1.apply(
     r'source_gen:combining_builder',
-    [_i4.combiningBuilder],
+    [_i5.combiningBuilder],
     _i1.toNoneByDefault(),
     hideOutput: false,
     appliesBuilders: const [r'source_gen:part_cleanup'],
   ),
+  _i1.apply(
+    r'build_resolvers:transitive_digests',
+    [_i6.transitiveDigestsBuilder],
+    _i1.toAllPackages(),
+    isOptional: true,
+    hideOutput: true,
+    appliesBuilders: const [r'build_resolvers:transitive_digest_cleanup'],
+  ),
+  _i1.applyPostProcess(
+    r'build_resolvers:transitive_digest_cleanup',
+    _i6.transitiveDigestCleanup,
+  ),
   _i1.applyPostProcess(
     r'source_gen:part_cleanup',
-    _i4.partCleanup,
+    _i5.partCleanup,
   ),
 ];
 void main(
   List<String> args, [
-  _i5.SendPort? sendPort,
+  _i7.SendPort? sendPort,
 ]) async {
-  await _i6.buildProcessState.receive(sendPort);
-  _i6.buildProcessState.isolateExitCode = await _i7.run(
+  var result = await _i8.run(
     args,
     _builders,
   );
-  _i8.exitCode = _i6.buildProcessState.isolateExitCode!;
-  await _i6.buildProcessState.send(sendPort);
+  sendPort?.send(result);
+  _i9.exitCode = result;
 }

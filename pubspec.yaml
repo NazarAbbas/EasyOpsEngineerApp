@@ -9,17 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  get: ^4.6.5
-  dio: ^5.5.0
+  get: ^4.6.6
+  dio: ^5.4.0
   http: ^0.13.6
+  logger: ^2.6.0
   freezed_annotation: ^2.2.0
-  retrofit: ^4.6.0
-  logger: ^2.6.0  # for logging purpose
-  json_annotation: ^4.9.0
-  floor: ^1.4.2
+  retrofit: ^4.1.0
+  floor: ^1.5.0              # ↑ upgrade floor
   get_storage: ^2.1.1
   loader_overlay: ^2.2.0
-  flutter_easyloading: ^3.0.5
   pin_code_fields: ^8.0.1
   cupertino_icons: ^1.0.8
   table_calendar: ^3.0.9
@@ -27,22 +25,24 @@ dependencies:
   image_picker: ^1.1.2
   path_provider: ^2.1.4
   audioplayers: ^5.2.1
-  signature: ^5.4.0   # or latest
+  signature: ^5.4.0
   open_filex: ^4.5.0
   url_launcher: ^6.3.1
   fl_chart: ^0.68.0
-  rename_app: ^1.6.5
   flutter_secure_storage: ^9.2.2
-  animations: ^2.0.8
-  
+  json_annotation: ^4.9.0  
+  flutter_easyloading: ^3.0.5
+  rename_app: ^1.6.5
+  animations: ^2.0.8  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  retrofit_generator: ^10.0.1
-  build_runner: ^2.6.0
-  json_serializable: ^6.10.0
+  build_runner: ^2.4.9
+  retrofit_generator: ^9.3.0  # ← uses dart_style ^3.x
+  json_serializable: ^6.9.0     # ← compatible with dart_style ^3.x
+  floor_generator: ^1.5.0       # ← match floor
 
 # Uncomment and configure if you plan to use launcher icons
 # flutter_launcher_icons:

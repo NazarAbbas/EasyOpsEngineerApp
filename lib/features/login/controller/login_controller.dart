@@ -1,10 +1,11 @@
 import 'package:easy_ops/core/constants/constant.dart';
 import 'package:easy_ops/core/theme/theme_controller.dart';
 import 'package:easy_ops/core/route_management/routes.dart';
+import 'package:easy_ops/database/app_database.dart';
+import 'package:easy_ops/database/entity/db_todo.dart';
 import 'package:easy_ops/features/login/domain/repository_impl.dart';
 import 'package:easy_ops/features/login/validator/validator.dart';
 import 'package:easy_ops/core/utils/app_snackbar.dart';
-import 'package:easy_ops/features/dashboard_screens/landing_dashboard/ui/landing_dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,6 +31,13 @@ class LoginPageController extends GetxController {
   }
 
   Future<void> login() async {
+    // somewhere in an async function
+    final db = await AppDatabase.open();
+    // insert returns the generated row id (if your @primaryKey has autoGenerate: true)
+    final newId = await db.todoDao.insertOne(Todo(title: 'Nazar'));
+    // read it back
+    final todo = await db.todoDao.findById(newId);
+
     if (isLoading.value) return;
 
     final userName = emailController.text.trim();
