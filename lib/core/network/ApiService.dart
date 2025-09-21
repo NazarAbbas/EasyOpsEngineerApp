@@ -3,7 +3,7 @@ import 'package:easy_ops/core/network/api_factory.dart';
 import 'package:easy_ops/core/network/auth_store.dart';
 import 'package:easy_ops/core/network/basic_auth_header.dart';
 import 'package:easy_ops/core/network/rest_client.dart';
-import 'package:easy_ops/features/login/models/login_response.dart';
+import 'package:easy_ops/features/feature_login/models/login_response.dart';
 
 class ApiService {
   late final RestClient _api;

@@ -1,7 +1,7 @@
 // lib/network/rest_client.dart
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:easy_ops/features/login/models/login_response.dart';
+import 'package:easy_ops/features/feature_login/models/login_response.dart';
 
 part 'rest_client.g.dart';
 

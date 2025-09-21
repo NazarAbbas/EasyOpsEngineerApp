@@ -61,4 +61,9 @@ class Routes {
   static String landingDashboardScreen = '/LANDING_DASHBOARD_SCREEN';
   static String staffScreen = '/STAFF_SCREEN';
   static String myDashboardScreen = '/MY_DASHBOARD_SCREEN';
+  static String generalWorkOrderScreen = '/GENERAL_WORK_ORDER_SCREEN';
+  static String generalWorkOrderDetailScreen =
+      '/GENERAL_WORK_ORDER_DETAIL_SCREEN';
+  static String generalStartWorkOrderScreen =
+      '/GENERAL_START_WORK_ORDER_SCREEN';
 }

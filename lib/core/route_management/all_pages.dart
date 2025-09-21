@@ -1,52 +1,55 @@
 import 'package:easy_ops/core/route_management/routes.dart';
 import 'package:easy_ops/core/binding/screen_binding.dart';
-import 'package:easy_ops/features/assets_management/assets_dashboard/ui/assets_dashboard_page.dart';
-import 'package:easy_ops/features/assets_management/assets_details/ui/assets_details_page.dart';
-import 'package:easy_ops/features/assets_management/assets_history/ui/assets_history_page.dart';
-import 'package:easy_ops/features/assets_management/assets_management_dashboard/ui/assets_management_dashboard_page.dart';
-import 'package:easy_ops/features/assets_management/assets_specification/ui/assets_specification_page.dart';
-import 'package:easy_ops/features/assets_management/pm_checklist/ui/pm_checklist_page.dart';
-import 'package:easy_ops/features/assets_management/pm_schedular/ui/pm_schedular_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/alerts/ui/alerts_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/home_dashboard/ui/home_dashboard_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/my_dashboard/ui/my_dashboard_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/new_suggestion/ui/new_suggestion_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/profile/ui/profile_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/suggestions_details/ui/suggestions_details_page.dart';
-import 'package:easy_ops/features/dashboard_profile_staff_suggestion/support/ui/support_page.dart';
-import 'package:easy_ops/features/dashboard_screens/landing_dashboard/ui/landing_dashboard_page.dart';
-import 'package:easy_ops/features/dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/accept_work_order/ui/accept_work_order_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/cancel_work_order/ui/cancel_work_order_page_from_diagnostic.dart';
-import 'package:easy_ops/features/maintenance_work_order/closure/ui/closure_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/closure_signature/ui/sign_off_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/diagnostics/ui/diagnostics_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/history/ui/history_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/hold_work_order/ui/hold_work_order_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/pending_activity/ui/panding_activity_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/rca_analysis/ui/rca_analysis_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/request_spares/ui/request_spares_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/return_spare_parts/ui/return_spare_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/spare_cart/ui/spare_cart_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/start_work_order/ui/start_work_order_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/start_work_submit/ui/start_work_submit_page.dart';
-import 'package:easy_ops/features/maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
-import 'package:easy_ops/features/maintenance_work_order/timeline/ui/timeline_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/add_resource/ui/add_resource_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/preventive_work_order_list/ui/preventive_work_order_list_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/preventive_start_work/ui/preventive_start_work_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/puposed_new_slot/ui/purposed_new_slot_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/reschedular/ui/reschedule_page.dart';
-import 'package:easy_ops/features/preventive_maintenance/confirm_wotk_order_slot/ui/confirm_work_order_slot_page.dart';
-import 'package:easy_ops/features/spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
-import 'package:easy_ops/features/forgot_password/ui/forgot_password_page.dart';
-import 'package:easy_ops/features/staff/ui/staff_tabs_page.dart';
-import 'package:easy_ops/features/update_password/ui/update_password_page.dart';
-import 'package:easy_ops/features/login/ui/login_page.dart';
-import 'package:easy_ops/features/splash/ui/spalsh_page.dart';
+import 'package:easy_ops/features/feature_assets_management/assets_dashboard/ui/assets_dashboard_page.dart';
+import 'package:easy_ops/features/feature_assets_management/assets_details/ui/assets_details_page.dart';
+import 'package:easy_ops/features/feature_assets_management/assets_history/ui/assets_history_page.dart';
+import 'package:easy_ops/features/feature_assets_management/assets_management_dashboard/ui/assets_management_dashboard_page.dart';
+import 'package:easy_ops/features/feature_assets_management/assets_specification/ui/assets_specification_page.dart';
+import 'package:easy_ops/features/feature_assets_management/pm_checklist/ui/pm_checklist_page.dart';
+import 'package:easy_ops/features/feature_assets_management/pm_schedular/ui/pm_schedular_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/alerts/ui/alerts_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/home_dashboard/ui/home_dashboard_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/my_dashboard/ui/my_dashboard_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/new_suggestion/ui/new_suggestion_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/profile/ui/profile_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/suggestion/ui/suggestion_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/suggestions_details/ui/suggestions_details_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/support/ui/support_page.dart';
+import 'package:easy_ops/features/feature_dashboard_screens/general_work_order/ui/general_work_order_page.dart';
+import 'package:easy_ops/features/feature_dashboard_screens/landing_dashboard/ui/landing_dashboard_page.dart';
+import 'package:easy_ops/features/feature_dashboard_screens/preventive_dashboard/ui/preventive_dashboard_page.dart';
+import 'package:easy_ops/features/feature_general_work_order/general_start_work_order/ui/general_start_work_order_page.dart';
+import 'package:easy_ops/features/feature_general_work_order/tabs/ui/general_work_order_details_tabs_shell.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/accept_work_order/ui/accept_work_order_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/cancel_work_order/ui/cancel_work_order_page_from_diagnostic.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/closure/ui/closure_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/closure_signature/ui/sign_off_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/diagnostics/ui/diagnostics_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/history/ui/history_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/hold_work_order/ui/hold_work_order_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/maintenance_wotk_order_management/ui/work_order_management_list_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/pending_activity/ui/panding_activity_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/rca_analysis/ui/rca_analysis_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/reassign_work_order/ui/reassign_work_order_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/request_spares/ui/request_spares_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/return_spare_parts/ui/return_spare_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/spare_cart/ui/spare_cart_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/start_work_order/ui/start_work_order_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/start_work_submit/ui/start_work_submit_page.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/tabs/ui/work_order_details_tabs_shell.dart';
+import 'package:easy_ops/features/feature_maintenance_work_order/timeline/ui/timeline_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/add_resource/ui/add_resource_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/preventive_work_order_list/ui/preventive_work_order_list_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/preventive_start_work/ui/preventive_start_work_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/puposed_new_slot/ui/purposed_new_slot_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/reschedular/ui/reschedule_page.dart';
+import 'package:easy_ops/features/feature_preventive_maintenance/confirm_wotk_order_slot/ui/confirm_work_order_slot_page.dart';
+import 'package:easy_ops/features/feature_spare_parts/tabs/ui/spare_parts_tabs_shell.dart';
+import 'package:easy_ops/features/feature_forgot_password/ui/forgot_password_page.dart';
+import 'package:easy_ops/features/feature_dashboard_profile_staff_suggestion/staff/ui/staff_tabs_page.dart';
+import 'package:easy_ops/features/feature_update_password/ui/update_password_page.dart';
+import 'package:easy_ops/features/feature_login/ui/login_page.dart';
+import 'package:easy_ops/features/feature_splash/ui/spalsh_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
@@ -340,6 +343,26 @@ class AllPages {
       GetPage(
         name: Routes.myDashboardScreen,
         page: () => MyDashboardPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+
+      GetPage(
+        name: Routes.generalWorkOrderScreen,
+        page: () => GeneralWorkOrderPage(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        name: Routes.generalWorkOrderDetailScreen,
+        page: () => GeneralOrderDetailsTabsShell(),
+        binding: ScreenBindings(),
+        transition: Transition.rightToLeft,
+      ),
+
+      GetPage(
+        name: Routes.generalStartWorkOrderScreen,
+        page: () => GeneralStartWorkOrderPage(),
         binding: ScreenBindings(),
         transition: Transition.rightToLeft,
       ),
